@@ -14,7 +14,8 @@ class Account(models.Model):
     email = models.EmailField(blank=True, null=True)
 
     avatar = models.ImageField(upload_to='avatars/',
-                               default='/static/store/img/default_avatar.png')
+                               default='/static/store/img/default_avatar.png',
+                               null=True, blank=True)
 
     balance = MoneyField(max_digits=10,
                          decimal_places=2,
@@ -46,7 +47,7 @@ class KeyPair(models.Model):
     The first 4 bytes of the encrypted private key determin
     additional hashing rounds as a measure against rainbow tables.
     """
-    user = models.OneToOneField(Account, on_delete=models.CASCADE)
+    account = models.OneToOneField(Account, on_delete=models.CASCADE)
 
     crypto_version = models.PositiveSmallIntegerField(default=1)
 
@@ -62,3 +63,5 @@ class KeyPair(models.Model):
                                   blank=False,
                                   null=False,
                                   unique=True)
+    created_at = models.DateTimeField(auto_now_add=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True, blank=True)
