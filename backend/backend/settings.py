@@ -25,8 +25,6 @@ config_files = [
 config = ConfigParser()
 config.read(config_files)
 
-print config.sections()
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
