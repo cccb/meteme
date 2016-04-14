@@ -1,0 +1,55 @@
+*.py[co]
+*.swp
+*.swo
+*.orig
+
+# Local configuration
+etc/vault/*local*
+
+
+# Packages
+*.egg
+*.egg-info
+dist
+build
+eggs
+parts
+sdist
+develop-eggs
+.installed.cfg
+
+# Installer logs
+pip-log.txt
+src
+
+# Unit test / coverage reports
+.coverage
+.tox
+coverage.xml
+cover
+htmlcov
+nosetests.xml
+pep8.txt
+sloccount.sc
+
+# Translations
+*.mo
+
+.ropeproject
+/venv
+/bower_components
+
+/static
+
+# TMP files
+ten-server.pid
+BUILD-RPM/
+RPMS/
+
+
+# Crapple
+.DS_Store
+
+*.pid
+
+*.sqlite3
