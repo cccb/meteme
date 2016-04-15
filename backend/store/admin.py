@@ -11,6 +11,8 @@ class ProductAdmin(admin.ModelAdmin):
         'id', 'name', 'get_price', 'active'
     ]
 
+    list_display_links = ['id', 'name']
+
     inlines = [
         ProductPriceInline,
     ]

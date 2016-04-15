@@ -65,3 +65,17 @@ class KeyPair(models.Model):
                                   unique=True)
     created_at = models.DateTimeField(auto_now_add=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, blank=True)
+
+
+class Transaction(models.Model):
+    """
+    Log Transactions.
+    Do not store the associated account.
+
+    This is just an audit log.
+    """
+    amount = MoneyField(max_digits=10,
+                        decimal_places=2,
+                        default_currency='EUR')
+
+    created_at = models.DateTimeField(auto_now_add=True, blank=True)
