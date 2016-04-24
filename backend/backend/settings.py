@@ -39,6 +39,16 @@ ALLOWED_HOSTS = [
 ]
 
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+
+    ],
+}
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -48,8 +58,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'rest_framework.authtoken',
     'mete',
     'store',
+    'api',
+    'client',
 ]
 
 MIDDLEWARE_CLASSES = [

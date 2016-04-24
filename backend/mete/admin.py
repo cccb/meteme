@@ -22,6 +22,9 @@ class TransactionAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         return False
 
+class SettingsAdmin(admin.ModelAdmin):
+    pass
+
 
 # Register model admins
 admin.site.register(models.Account, AccountAdmin)

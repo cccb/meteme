@@ -1,7 +1,9 @@
 from __future__ import unicode_literals
 
 from django.db import models
+
 from djmoney.models.fields import MoneyField
+from moneyed import Money
 
 class Account(models.Model):
     """
@@ -19,7 +21,8 @@ class Account(models.Model):
 
     balance = MoneyField(max_digits=10,
                          decimal_places=2,
-                         default_currency='EUR')
+                         default_currency='EUR',
+                         default=Money(0, 'EUR'))
 
     created_at = models.DateTimeField(auto_now_add=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, blank=True)
@@ -79,3 +82,11 @@ class Transaction(models.Model):
                         default_currency='EUR')
 
     created_at = models.DateTimeField(auto_now_add=True, blank=True)
+
+
+class Settings(models.Model):
+    price_set = models.ForeignKey('store.PriceSet', null=True, blank=False, default=1)
+
+    class Meta:
+        permissions = [('has_api_access', 'Has API access')]
+
