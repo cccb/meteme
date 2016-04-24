@@ -1,6 +1,7 @@
 Django==1.9.5
-djangorestframework==3.3.2
 django-money==0.7.6
+django-solo==1.1.2
+djangorestframework==3.3.3
 Pillow==3.2.0
 py-moneyed==0.6.0
 six==1.10.0
