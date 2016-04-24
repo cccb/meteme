@@ -29,6 +29,7 @@ class AccountViewSet(viewsets.ModelViewSet):
 
 class ProductsSerializer(serializers.HyperlinkedModelSerializer):
 
+    price = MoneyField(default=Money('0.00', 'EUR'))
     prices = serializers.DictField()
 
     def get_prices(self, product):
@@ -37,7 +38,7 @@ class ProductsSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = store_models.Product
-        fields = ('name', 'picture', 'active', 'picture', 'prices')
+        fields = ('name', 'picture', 'active', 'picture', 'prices', 'price')
 
 
 class ProductsViewSet(viewsets.ModelViewSet):

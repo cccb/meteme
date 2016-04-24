@@ -1,4 +1,6 @@
 from django.contrib import admin
+from solo.admin import SingletonModelAdmin
+
 import models
 
 class AccountAdmin(admin.ModelAdmin):
@@ -22,11 +24,18 @@ class TransactionAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         return False
 
-class SettingsAdmin(admin.ModelAdmin):
-    pass
+
+class SettingsAdmin(SingletonModelAdmin):
+
+    def __unicode__(self):
+        return 'Mete98 (ME) Configuration'
+
+    class Meta:
+        verbose_name = 'Mete98 (ME) Configuration'
 
 
 # Register model admins
 admin.site.register(models.Account, AccountAdmin)
 admin.site.register(models.KeyPair, KeyPairAdmin)
 admin.site.register(models.Transaction, TransactionAdmin)
+admin.site.register(models.Settings, SettingsAdmin)

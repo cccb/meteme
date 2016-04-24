@@ -5,6 +5,8 @@ from django.db import models
 from djmoney.models.fields import MoneyField
 from moneyed import Money
 
+from solo.models import SingletonModel
+
 class Account(models.Model):
     """
     User account:
@@ -84,7 +86,7 @@ class Transaction(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, blank=True)
 
 
-class Settings(models.Model):
+class Settings(SingletonModel):
     price_set = models.ForeignKey('store.PriceSet', null=True, blank=False, default=1)
 
     class Meta:

@@ -1,6 +1,8 @@
 from django.db import models
 from djmoney.models.fields import MoneyField
 
+import mete
+
 DEFAULT_PRICE_SET_ID = 1
 
 
@@ -60,9 +62,16 @@ class Product(models.Model):
     def __unicode__(self):
         return self.name
 
-    def price(self, price_set_name="default"):
-        price_set = PriceSet.objects.get(name=price_set_name)
-        price = Price.objects.get(product=self, price_set=price_set)
+    @property
+    def price(self):
+        settings = mete.models.Settings.get_solo()
+
+        try:
+            price = Price.objects.get(product=self, price_set=settings.price_set)
+        except:
+            # fallback
+            default_price_set = PriceSet.objects.get(name='default')
+            price = Price.objects.get(product=self, price_set=default_price_set)
 
         return price
 
@@ -74,10 +83,6 @@ class Product(models.Model):
         """
         prices = [[str(p.price_set), str(p)] for p in self.price_set.all()]
         return dict(prices)
-
-    @property
-    def default_price(self):
-        return self.price('default')
 
 
 class Log(models.Model):

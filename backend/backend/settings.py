@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'solo.apps.SoloAppConfig',
     'rest_framework',
     'rest_framework.authtoken',
     'mete',
