@@ -6,4 +6,3 @@ from api import views
 urlpatterns = [
     url('', include(views.router.urls)),
 ]
-

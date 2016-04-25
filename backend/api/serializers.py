@@ -15,7 +15,11 @@ class MoneyField(serializers.Field):
 
     def to_internal_value(self, data):
         """ String to Money """
-        amount, currency = data.split()
+        try:
+            amount, currency = data.split()
+        except:
+            amount, currency = (data, 'EUR')
+
         return Money(amount, currency)
 
 
@@ -26,14 +30,14 @@ class AccountSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = mete_models.Account
-        fields = ('name', 'email', 'avatar', 'balance', 'created_at',
+        fields = ('id', 'name', 'email', 'avatar', 'balance', 'created_at',
                   'updated_at')
 
 
 class ProductSerializer(serializers.ModelSerializer):
 
     price = MoneyField(default=Money('0.00', 'EUR'))
-    prices = serializers.DictField()
+    prices = serializers.DictField(read_only=True)
 
     def get_prices(self, product):
         prices = [[str(p.price_set), str(p)] for p in product.price_set.all()]
@@ -44,48 +48,20 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = ('name', 'picture', 'active', 'picture', 'prices', 'price')
 
 
-class PaymentSerializer(serializers.Serializer):
+class PurchaseSerializer(serializers.Serializer):
     """
-    Serialize / parse payment
+    (De-)Serialize Purchase
     """
-    account = serializers.PrimaryKeyRelatedField(
-        many=False,
-        queryset=mete_models.Account.objects.all())
-
     product = serializers.PrimaryKeyRelatedField(
         many=False,
         queryset=store_models.Product.objects.all())
 
-    def create(self, validated_data):
-        """
-        Create payment, withdraw amount from accounts balance
-        """
-        account = validated_data['account']
-        product = validated_data['product']
 
-        account_serializer = AccountSerializer(account)
-        product_serializer = ProductSerializer(product)
-
-        # Withdraw amount from account
-        old_balance = account.balance
-        new_balance = old_balance - product.price
-        account.balance = new_balance
-        account.save()
-
-        result = {
-            "product": product_serializer.data,
-            "account": account_serializer.data,
-            "price": str(product.price),
-            "old_balance": str(old_balance),
-            "new_balance": str(new_balance),
-        }
-        return result
-
-    def save(self):
-        """
-        Wrapper for create payment
-        """
-        return self.create(self.validated_data)
+class DepositSerializer(serializers.Serializer):
+    """
+    Serialize a single money field as deposit.
+    """
+    amount = MoneyField(default=Money('0.00', 'EUR'))
 
 
 class TransferSerializer(serializers.Serializer):
@@ -100,9 +76,4 @@ class TransferSerializer(serializers.Serializer):
         many=False,
         queryset=mete_models.Account.objects.all())
 
-    def create(self, validated_data):
-        """
-        Create transfer, withdraw money from source account
-        add to dest account.
-        """
-        return False
+    amount = MoneyField(default=Money('0.00', 'EUR'))
