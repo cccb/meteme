@@ -1,44 +1,23 @@
 from django.conf.urls import url, include
 
-from rest_framework import routers, serializers, viewsets
+from rest_framework import routers, viewsets, status
+from rest_framework.response import Response
+
 from mete import models as mete_models
 from store import models as store_models
 
 from moneyed import Money
-from api.serializers import MoneyField
+from api import serializers
 
-class AccountSerializer(serializers.ModelSerializer):
-
-    balance = MoneyField(default=Money('0.00', 'EUR'))
-    avatar = serializers.ImageField(read_only=True)
-
-    class Meta:
-        model = mete_models.Account
-        fields = ('name', 'email', 'avatar', 'balance', 'created_at',
-                  'updated_at')
+from pprint import pprint
 
 
-class AccountViewSet(viewsets.ModelViewSet):
+class AccountsViewSet(viewsets.ModelViewSet):
     """
     Manage user accounts
     """
     queryset = mete_models.Account.objects.all()
-    serializer_class = AccountSerializer
-
-
-
-class ProductsSerializer(serializers.HyperlinkedModelSerializer):
-
-    price = MoneyField(default=Money('0.00', 'EUR'))
-    prices = serializers.DictField()
-
-    def get_prices(self, product):
-        prices = [[str(p.price_set), str(p)] for p in product.price_set.all()]
-        return dict(prices)
-
-    class Meta:
-        model = store_models.Product
-        fields = ('name', 'picture', 'active', 'picture', 'prices', 'price')
+    serializer_class = serializers.AccountSerializer
 
 
 class ProductsViewSet(viewsets.ModelViewSet):
@@ -46,13 +25,39 @@ class ProductsViewSet(viewsets.ModelViewSet):
     Get Products (readonly API)
     """
     queryset = store_models.Product.objects.all()
-    serializer_class = ProductsSerializer
+    serializer_class = serializers.ProductSerializer
 
     class Meta:
         model = store_models.Product
 
 
+class PaymentsViewSet(viewsets.ViewSet):
+    """
+    Handle payments
+    """
+    serializer_class = serializers.PaymentSerializer
+
+    def create(self, request):
+        serializer = serializers.PaymentSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(serializer.save())
+
+
+class TransfersViewSet(viewsets.ViewSet):
+    """
+    Handle user to user transfers
+    """
+    serializer_class = serializers.TransferSerializer
+
+    def create(self, request):
+        pass
+
 
 router = routers.DefaultRouter()
-router.register('accounts', AccountViewSet)
+router.register('accounts', AccountsViewSet)
 router.register('products', ProductsViewSet)
+router.register('payments', PaymentsViewSet, base_name='payments')
+router.register('transfers', TransfersViewSet, base_name='transfers')

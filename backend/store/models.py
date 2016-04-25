@@ -73,7 +73,7 @@ class Product(models.Model):
             default_price_set = PriceSet.objects.get(name='default')
             price = Price.objects.get(product=self, price_set=default_price_set)
 
-        return price
+        return price.amount
 
     @property
     def prices(self):
