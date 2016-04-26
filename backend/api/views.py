@@ -106,12 +106,12 @@ class AccountsViewSet(viewsets.ModelViewSet):
 
             detail_urls = ['deposit', 'purchase']
 
-            doc += "\n### Available detail routes\n\n"
+            doc += "\n\n**Available detail routes:**\n\n"
             for detail in detail_urls:
                 url = "/api/accounts/{pk}/{detail}/".format(pk=pk, detail=detail)
                 doc += "* [{url}]({url})\n".format(url=url)
 
-            doc += "\n"
+            doc += "\n\n"
 
         cls = type('CLS', (), {"__doc__": doc})
         return views.get_view_description(cls, html)
