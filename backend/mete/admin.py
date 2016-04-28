@@ -4,9 +4,10 @@ from solo.admin import SingletonModelAdmin
 import models
 
 class AccountAdmin(admin.ModelAdmin):
-    list_display = ['id', 'user', 'balance', 'created_at', 'updated_at']
+    list_display = ['id', 'user', 'balance', 'created_at', 'updated_at',
+                    'locked', 'disabled']
 
-    list_display_links = ['id', 'balance']
+    list_display_links = ['id', 'balance', 'user']
 
 class KeyPairAdmin(admin.ModelAdmin):
     list_display = ['id', 'user', 'public_key', 'created_at', 'updated_at']

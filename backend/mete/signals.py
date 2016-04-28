@@ -27,10 +27,11 @@ def update_transaction_log(sender, instance, raw, using, update_fields,
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
-def create_user_account(sender, instance, **kwargs):
+def create_user_account(sender, instance, created, **kwargs):
     """
     Automatically create user account, when a new
     user is created.
     """
-    Account.objects.create(user=instance)
+    if created:
+        models.Account.objects.create(user=instance)
 

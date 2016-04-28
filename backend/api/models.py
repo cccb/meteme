@@ -2,4 +2,14 @@ from __future__ import unicode_literals
 
 from django.db import models
 
-# Create your models here.
+
+class Api(models.Model):
+    """
+    Create pseudo model to provide API ACCESS permissions.
+    """
+    class Meta:
+        permissions = [('api_access', 'Api Access')]
+        default_permissions = []
+        managed = False
+
+

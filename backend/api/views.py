@@ -1,4 +1,5 @@
 from django.conf.urls import url, include
+from django.contrib.auth import models as auth_models
 
 from rest_framework import routers, viewsets, status, views
 from rest_framework.response import Response
@@ -13,18 +14,22 @@ from api import serializers
 from pprint import pprint
 
 
-class AccountsViewSet(viewsets.ModelViewSet):
+class UserAccountViewSet(viewsets.ModelViewSet):
     """
-    Manage user accounts.
+    Manage user accounts
     """
-    queryset = mete_models.Account.objects.all()
+    serializer_class = serializers.UserSerializer
+    queryset = auth_models.User.objects.filter(is_active=True,
+                                               account__disabled=False)
+
 
     @detail_route(methods=['post'])
     def deposit(self, request, pk=None):
         """
         Make deposit using the deposit serializer
         """
-        account = mete_models.Account.objects.get(id=pk)
+        user = auth_models.User.objects.get(id=pk)
+        account = user.account
 
         serializer = serializers.DepositSerializer(data=request.data)
         if not serializer.is_valid():
@@ -37,11 +42,11 @@ class AccountsViewSet(viewsets.ModelViewSet):
         account.balance = new_balance
         account.save()
 
-        # Respond with account
-        account_serializer = serializers.AccountSerializer(account)
+        # Respond with  user
+        user_serializer = serializers.UserSerializer(user)
 
         result = {
-            "account": account_serializer.data,
+            "user": user_serializer.data,
             "old_balance": str(old_balance),
             "new_balance": str(new_balance),
         }
@@ -53,7 +58,8 @@ class AccountsViewSet(viewsets.ModelViewSet):
         """
         Make purchase using the purchase serializer
         """
-        account = mete_models.Account.objects.get(id=pk)
+        user = auth_models.User.objects.get(id=pk)
+        account = user.account
 
         serializer = self.get_serializer(data=request.data)
         if not serializer.is_valid():
@@ -64,7 +70,7 @@ class AccountsViewSet(viewsets.ModelViewSet):
         product = serializer.validated_data['product']
 
         # Create serializer for docs
-        account_serializer = serializers.AccountSerializer(account)
+        user_serializer = serializers.UserSerializer(user)
         product_serializer = serializers.ProductSerializer(product)
 
         # Withdraw amount from account
@@ -75,7 +81,7 @@ class AccountsViewSet(viewsets.ModelViewSet):
 
         result = {
             "product": product_serializer.data,
-            "account": account_serializer.data,
+            "user": user_serializer.data,
             "old_balance": str(old_balance),
             "new_balance": str(new_balance),
         }
@@ -91,7 +97,7 @@ class AccountsViewSet(viewsets.ModelViewSet):
         if self.action == 'purchase':
             return serializers.PurchaseSerializer
 
-        return serializers.AccountSerializer
+        return serializers.UserSerializer
 
 
     def get_view_description(self, html):
@@ -99,7 +105,7 @@ class AccountsViewSet(viewsets.ModelViewSet):
         Return extended / dynamic view description for
         detail view.
         """
-        doc = super(AccountsViewSet, self).get_view_description(html=False)
+        doc = super(UserAccountViewSet, self).get_view_description(html=False)
 
         if self.action == 'retrieve':
             pk = self.kwargs.get('pk', 1)
@@ -108,13 +114,17 @@ class AccountsViewSet(viewsets.ModelViewSet):
 
             doc += "\n\n**Available detail routes:**\n\n"
             for detail in detail_urls:
-                url = "/api/accounts/{pk}/{detail}/".format(pk=pk, detail=detail)
+                url = "/api/users/{pk}/{detail}/".format(pk=pk, detail=detail)
                 doc += "* [{url}]({url})\n".format(url=url)
 
             doc += "\n\n"
 
         cls = type('CLS', (), {"__doc__": doc})
         return views.get_view_description(cls, html)
+
+
+    class Meta:
+        model = auth_models.User
 
 
 class ProductsViewSet(viewsets.ReadOnlyModelViewSet):
@@ -172,6 +182,6 @@ class TransfersViewSet(viewsets.GenericViewSet):
 
 
 router = routers.DefaultRouter()
-router.register('accounts', AccountsViewSet)
+router.register('users', UserAccountViewSet)
 router.register('products', ProductsViewSet)
 router.register('transfers', TransfersViewSet, base_name='transfers')

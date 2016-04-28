@@ -4,6 +4,9 @@ from moneyed import Money
 from mete import models as mete_models
 from store import models as store_models
 
+from django.conf import settings
+from django.contrib.auth import models as auth_models
+
 
 class MoneyField(serializers.Field):
     """
@@ -23,15 +26,34 @@ class MoneyField(serializers.Field):
         return Money(amount, currency)
 
 
-class AccountSerializer(serializers.ModelSerializer):
 
+
+class AccountSerializer(serializers.ModelSerializer):
     balance = MoneyField(default=Money('0.00', 'EUR'))
     avatar = serializers.ImageField(read_only=True)
 
     class Meta:
         model = mete_models.Account
-        fields = ('id', 'name', 'email', 'avatar', 'balance', 'created_at',
+        fields = ('id', 'avatar', 'balance', 'locked', 'created_at',
                   'updated_at')
+
+
+class UserSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(required=False)
+    account = AccountSerializer(many=False)
+
+    def create(self, validated_data):
+        account_data = validated_data.pop('account')
+
+        # Create user, update account
+        user = auth_models.User.objects.create(**validated_data)
+        user.account.balance = account_data['balance']
+
+        return user
+
+    class Meta:
+        model = auth_models.User
+        fields = ('username', 'email', 'first_name', 'last_name', 'account')
 
 
 class ProductSerializer(serializers.ModelSerializer):

@@ -30,12 +30,20 @@ class Account(models.Model):
                          default_currency='EUR',
                          default=Money(0, 'EUR'))
 
+
+    disabled = models.BooleanField(default=False)
+    locked = models.BooleanField(default=False)
+
     created_at = models.DateTimeField(auto_now_add=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, blank=True)
 
     def __unicode__(self):
         return self.name
 
+
+    @property
+    def name(self):
+        return self.user.username
 
 
 class KeyPair(models.Model):
