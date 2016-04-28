@@ -1,3 +1,5 @@
+
+from django.conf import settings
 from django.dispatch import receiver
 from django.db.models.signals import pre_save, post_save
 
@@ -22,3 +24,13 @@ def update_transaction_log(sender, instance, raw, using, update_fields,
 
     # Create transaction log entry
     models.Transaction.objects.create(amount=diff)
+
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_user_account(sender, instance, **kwargs):
+    """
+    Automatically create user account, when a new
+    user is created.
+    """
+    Account.objects.create(user=instance)
+

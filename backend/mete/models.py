@@ -1,11 +1,13 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django.conf import settings
 
 from djmoney.models.fields import MoneyField
 from moneyed import Money
 
 from solo.models import SingletonModel
+
 
 class Account(models.Model):
     """
@@ -14,8 +16,10 @@ class Account(models.Model):
     they don't have a password, may not have an email,
     and have an avatar.
     """
-    name = models.CharField(max_length=20)
-    email = models.EmailField(blank=True, null=True)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL,
+                                null=False,
+                                blank=False,
+                                on_delete=models.CASCADE)
 
     avatar = models.ImageField(upload_to='avatars/',
                                default='/static/store/img/default_avatar.png',
@@ -52,7 +56,10 @@ class KeyPair(models.Model):
     The first 4 bytes of the encrypted private key determin
     additional hashing rounds as a measure against rainbow tables.
     """
-    account = models.OneToOneField(Account, on_delete=models.CASCADE)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL,
+                                null=False,
+                                blank=False,
+                                on_delete=models.CASCADE)
 
     crypto_version = models.PositiveSmallIntegerField(default=1)
 
@@ -91,4 +98,3 @@ class Settings(SingletonModel):
 
     class Meta:
         permissions = [('has_api_access', 'Has API access')]
-
