@@ -5,7 +5,7 @@ import models
 
 class AccountAdmin(admin.ModelAdmin):
     list_display = ['id', 'user', 'balance', 'created_at', 'updated_at',
-                    'locked', 'disabled']
+                    'is_locked']
 
     list_display_links = ['id', 'balance', 'user']
 

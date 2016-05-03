@@ -19,9 +19,7 @@ class UserAccountViewSet(viewsets.ModelViewSet):
     Manage user accounts
     """
     serializer_class = serializers.UserSerializer
-    queryset = auth_models.User.objects.filter(is_active=True,
-                                               account__disabled=False)
-
+    queryset = auth_models.User.objects.filter(is_active=True)
 
     @detail_route(methods=['post'])
     def deposit(self, request, pk=None):

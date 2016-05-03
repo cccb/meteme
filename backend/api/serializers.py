@@ -8,6 +8,27 @@ from django.conf import settings
 from django.contrib.auth import models as auth_models
 
 
+class AccountNotLocked:
+    """
+    Check if the account is not locked.
+    """
+    def __call__(self, value):
+        account = value
+        if account.is_locked:
+            error = ("The action requires an non locked account. "
+                     "The account is locked.")
+            raise serializers.ValidationError(error)
+
+class UserAccountNotLocked:
+    """
+    Check if the associated account is not locked
+    """
+    def __call__(self, value):
+        user = value
+        account = user.account
+        AccountNotLocked()(account)
+
+
 class MoneyField(serializers.Field):
     """
     Money objects are serialized into a string <Amount> <Currency>
@@ -31,9 +52,11 @@ class AccountSerializer(serializers.ModelSerializer):
     balance = MoneyField(default=Money('0.00', 'EUR'))
     avatar = serializers.ImageField(read_only=True)
 
+    locked = serializers.BooleanField(read_only=True, source='is_locked')
+
     class Meta:
         model = mete_models.Account
-        fields = ['id', 'avatar', 'balance', 'locked', 'created_at',
+        fields = ['avatar', 'balance', 'locked', 'created_at',
                   'updated_at']
 
 
@@ -83,6 +106,10 @@ class PurchaseSerializer(serializers.Serializer):
         Implement create to create, to perform purchase
         and create transaction.
         """
+
+        # Assert user is not locked 
+        UserAccountNotLocked()(user)
+
         account = user.account
 
         # Get validated product
@@ -117,6 +144,9 @@ class DepositSerializer(serializers.Serializer):
         """
         Deposit money on user account
         """
+        # Assert user is not locked 
+        UserAccountNotLocked()(user)
+
         account = user.account
         amount = self.validated_data['amount']
 
@@ -139,13 +169,15 @@ class TransferSerializer(serializers.Serializer):
     """
     (De-)Serialize transfers
     """
-    from_account = serializers.PrimaryKeyRelatedField(
+    from_user = serializers.PrimaryKeyRelatedField(
         many=False,
-        queryset=mete_models.Account.objects.all())
+        queryset=auth_models.User.objects.filter(is_active=True,
+                                                 account__is_locked=False))
 
-    to_account = serializers.PrimaryKeyRelatedField(
+    to_user = serializers.PrimaryKeyRelatedField(
         many=False,
-        queryset=mete_models.Account.objects.all())
+        queryset=auth_models.User.objects.filter(is_active=True,
+                                                 account__is_locked=False))
 
     amount = MoneyField(default=Money('0.00', 'EUR'))
 
@@ -153,8 +185,12 @@ class TransferSerializer(serializers.Serializer):
         """
         Create a transfer between two accounts
         """
-        from_account = self.validated_data['from_account']
-        to_account = self.validated_data['to_account']
+        from_user = self.validated_data['from_user']
+        from_account = from_user.account
+
+        to_user = self.validated_data['to_user']
+        to_account = to_user.account
+
         amount = self.validated_data['amount']
 
         # Prevent stealing money

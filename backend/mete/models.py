@@ -30,9 +30,7 @@ class Account(models.Model):
                          default_currency='EUR',
                          default=Money(0, 'EUR'))
 
-
-    disabled = models.BooleanField(default=False)
-    locked = models.BooleanField(default=False)
+    is_locked = models.BooleanField(default=False)
 
     created_at = models.DateTimeField(auto_now_add=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, blank=True)
