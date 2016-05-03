@@ -27,17 +27,6 @@ class PriceSetAdmin(admin.ModelAdmin):
     pass
 
 
-class LogsAdmin(admin.ModelAdmin):
-    list_display = ['created_at', 'product_name', 'product_amount']
-    list_display_links = []
-
-    def has_add_permission(self, request, obj=None):
-        return False
-
-    def has_delete_permission(self, request, obj=None):
-        return False
-
 # Register model admins 
 admin.site.register(models.Product, ProductAdmin)
 admin.site.register(models.PriceSet, PriceSetAdmin)
-admin.site.register(models.Log, LogsAdmin)

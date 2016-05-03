@@ -29,28 +29,21 @@ class UserAccountViewSet(viewsets.ModelViewSet):
         Make deposit using the deposit serializer
         """
         user = auth_models.User.objects.get(id=pk)
-        account = user.account
 
         serializer = serializers.DepositSerializer(data=request.data)
         if not serializer.is_valid():
             return Response(serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
 
-        # Update user account
-        old_balance = account.balance
-        new_balance = old_balance + serializer.validated_data['amount']
-        account.balance = new_balance
-        account.save()
+        deposit = serializer.create(user)
 
-        # Respond with  user
-        user_serializer = serializers.UserSerializer(user)
-
-        result = {
+        # Serialize result and create response
+        user_serializer = serializers.UserSerializer(deposit['user'])
+        return Response({
             "user": user_serializer.data,
-            "old_balance": str(old_balance),
-            "new_balance": str(new_balance),
-        }
-        return Response(result)
+            "old_balance": str(deposit['old_balance']),
+            "new_balance": str(deposit['new_balance']),
+        })
 
 
     @detail_route(methods=['post'])
@@ -59,33 +52,25 @@ class UserAccountViewSet(viewsets.ModelViewSet):
         Make purchase using the purchase serializer
         """
         user = auth_models.User.objects.get(id=pk)
-        account = user.account
 
+        # Get purchase serializer
         serializer = self.get_serializer(data=request.data)
         if not serializer.is_valid():
             return Response(serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
 
-        # Get validated product
-        product = serializer.validated_data['product']
+        purchase = serializer.create(user)
 
         # Create serializer for docs
-        user_serializer = serializers.UserSerializer(user)
-        product_serializer = serializers.ProductSerializer(product)
+        user_serializer = serializers.UserSerializer(purchase['user'])
+        product_serializer = serializers.ProductSerializer(purchase['product'])
 
-        # Withdraw amount from account
-        old_balance = account.balance
-        new_balance = old_balance - product.price
-        account.balance = new_balance
-        account.save()
-
-        result = {
+        return Response({
             "product": product_serializer.data,
             "user": user_serializer.data,
-            "old_balance": str(old_balance),
-            "new_balance": str(new_balance),
-        }
-        return Response(result)
+            "old_balance": str(purchase['old_balance']),
+            "new_balance": str(purchase['new_balance']),
+        })
 
 
     def get_serializer_class(self):
@@ -150,35 +135,19 @@ class TransfersViewSet(viewsets.GenericViewSet):
             return Response(serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
 
-        # Get source, dest and amount
-        from_account = serializer.validated_data['from_account']
-        to_account = serializer.validated_data['to_account']
-        amount = serializer.validated_data['amount']
+        transfer = serializer.create()
 
-        # Prevent stealing money
-        if amount < Money(0, currency='EUR'):
-            amount *= -1
-
-        # Create serializers
-        from_account_serializer = serializers.AccountSerializer(from_account)
-        to_account_serializer = serializers.AccountSerializer(to_account)
-
-        if from_account.id is not to_account.id:
-            # Since the account was already loaded, this
-            # would cause kind of a race condition and would lead to
-            # spontaneous money formation.
-            from_account.balance -= amount
-            from_account.save()
-
-            to_account.balance += amount
-            to_account.save()
-
-        result = {
+        # Serialize and create response
+        from_account_serializer = serializers.AccountSerializer(
+            transfer['from_account']
+        )
+        to_account_serializer = serializers.AccountSerializer(
+            transfer['to_account']
+        )
+        return Response({
             "from_account": from_account_serializer.data,
             "to_account": to_account_serializer.data,
-        }
-
-        return Response(result)
+        })
 
 
 router = routers.DefaultRouter()

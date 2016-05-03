@@ -85,19 +85,3 @@ class Product(models.Model):
         return dict(prices)
 
 
-class Log(models.Model):
-    """
-    Single log entry, for recording transactions.
-    """
-    product = models.OneToOneField(Product,
-                                   on_delete=models.SET_NULL,
-                                   null=True,
-                                   blank=True)
-
-    product_name = models.CharField(max_length=80)
-
-    product_amount = MoneyField(decimal_places=2,
-                                max_digits=10,
-                                default_currency='EUR')
-
-    created_at = models.DateTimeField(auto_now_add=True, blank=True)
