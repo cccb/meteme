@@ -49,7 +49,7 @@ class MoneyField(serializers.Field):
 
 
 class AccountSerializer(serializers.ModelSerializer):
-    balance = MoneyField(default=Money('0.00', 'EUR'))
+    balance = MoneyField(default=Money('0.00', 'EUR'), read_only=True)
     avatar = serializers.ImageField(read_only=True)
 
     locked = serializers.BooleanField(read_only=True, source='is_locked')
@@ -62,15 +62,17 @@ class AccountSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(required=False)
-    account = AccountSerializer(many=False)
+    account = AccountSerializer(many=False, required=False)
 
     def create(self, validated_data):
-        account_data = validated_data.pop('account')
+        # Create user
+        try:
+            account = validated_data.pop('account')
+        except:
+            # Well d'oh.
+            pass
 
-        # Create user, update account
         user = auth_models.User.objects.create(**validated_data)
-        user.account.balance = account_data['balance']
-
         return user
 
     class Meta:
@@ -124,7 +126,7 @@ class PurchaseSerializer(serializers.Serializer):
         # Add to transaction log
         mete_models.Transaction.objects.create(product=product,
                                                product_name=product.name,
-                                               amount=product.price )
+                                               amount=-product.price )
 
         return {
             "product": product,
