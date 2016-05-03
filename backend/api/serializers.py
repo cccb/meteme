@@ -79,6 +79,23 @@ class PurchaseSerializer(serializers.Serializer):
         queryset=store_models.Product.objects.all())
 
 
+    def create(self, account):
+        """
+        Implement create to create, to perform purchase
+        and create transaction.
+        """
+
+        # Get validated product
+        product = self.validated_data['product']
+
+        # Withdraw amount from account
+        old_balance = account.balance
+        new_balance = old_balance - product.price
+        account.balance = new_balance
+        account.save()
+
+
+
 class DepositSerializer(serializers.Serializer):
     """
     Serialize a single money field as deposit.

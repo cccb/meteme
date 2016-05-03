@@ -15,7 +15,7 @@ class KeyPairAdmin(admin.ModelAdmin):
 
 
 class TransactionAdmin(admin.ModelAdmin):
-    list_display = ['created_at', 'amount']
+    list_display = ['created_at', 'amount', 'product']
     list_display_links = []
 
     def has_add_permission(self, request, obj=None):

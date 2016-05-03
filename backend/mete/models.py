@@ -98,6 +98,10 @@ class Transaction(models.Model):
                         decimal_places=2,
                         default_currency='EUR')
 
+
+    product = models.OneToOneField('store.Product', null=True, blank=True)
+    product_name = models.CharField(null=True, blank=True, max_length=80)
+
     created_at = models.DateTimeField(auto_now_add=True, blank=True)
 
 
