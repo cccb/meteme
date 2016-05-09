@@ -114,7 +114,7 @@ class ProductsViewSet(viewsets.ReadOnlyModelViewSet):
     """
     Get Products (readonly API)
     """
-    queryset = store_models.Product.objects.all()
+    queryset = store_models.Product.objects.filter(active=True)
     serializer_class = serializers.ProductSerializer
 
     class Meta:

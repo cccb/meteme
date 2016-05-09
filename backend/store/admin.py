@@ -8,7 +8,7 @@ class ProductPriceInline(admin.StackedInline):
 
 class ProductAdmin(admin.ModelAdmin):
     list_display = [
-        'id', 'name', 'get_price', 'active'
+        'id', 'name', 'price', 'active'
     ]
 
     list_display_links = ['id', 'name']
@@ -16,11 +16,6 @@ class ProductAdmin(admin.ModelAdmin):
     inlines = [
         ProductPriceInline,
     ]
-
-    def get_price(self, product):
-        return product.default_price
-
-    get_price.__name__ = 'Price (default)'
 
 
 class PriceSetAdmin(admin.ModelAdmin):
