@@ -5,9 +5,11 @@ import models
 
 class AccountAdmin(admin.ModelAdmin):
     list_display = ['id', 'user', 'balance', 'created_at', 'updated_at',
-                    'is_locked']
+                    'is_locked', 'is_disabled']
 
     list_display_links = ['id', 'balance', 'user']
+
+    readonly_fields = ['user']
 
 class KeyPairAdmin(admin.ModelAdmin):
     list_display = ['id', 'user', 'public_key', 'created_at', 'updated_at']

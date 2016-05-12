@@ -31,6 +31,7 @@ class Account(models.Model):
                          default=Money(0, 'EUR'))
 
     is_locked = models.BooleanField(default=False)
+    is_disabled = models.BooleanField(default=False)
 
     created_at = models.DateTimeField(auto_now_add=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, blank=True)
@@ -106,5 +107,3 @@ class Transaction(models.Model):
 class Settings(SingletonModel):
     price_set = models.ForeignKey('store.PriceSet', null=True, blank=False, default=1)
 
-    class Meta:
-        permissions = [('has_api_access', 'Has API access')]
