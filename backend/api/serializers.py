@@ -92,7 +92,8 @@ class ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = store_models.Product
-        fields = ['name', 'picture', 'active', 'picture', 'prices', 'price']
+        fields = ['id', 'name', 'picture', 'active', 'picture', 'prices',
+                  'price']
 
 
 class PurchaseSerializer(serializers.Serializer):
