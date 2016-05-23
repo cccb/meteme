@@ -20,6 +20,15 @@ class TransactionAdmin(admin.ModelAdmin):
     list_display = ['created_at', 'amount', 'product']
     list_display_links = []
 
+    def get_actions(self, request):
+        """
+        Override get actions to get rid of delete
+        """
+        actions = super(TransactionAdmin, self).get_actions(request)
+        del actions['delete_selected']
+        return actions
+
+
     def has_add_permission(self, request, obj=None):
         return False
 
