@@ -5,8 +5,7 @@ from django.shortcuts import render
 from solo.admin import SingletonModelAdmin
 
 import models
-
-from pprint import pprint
+import forms
 
 class AccountAdmin(admin.ModelAdmin):
     list_display = ['id', 'user', 'balance', 'created_at', 'updated_at',
@@ -15,6 +14,8 @@ class AccountAdmin(admin.ModelAdmin):
     list_display_links = ['id', 'balance', 'user']
 
     readonly_fields = ['user']
+
+    form = forms.AccountForm
 
 class KeyPairAdmin(admin.ModelAdmin):
     list_display = ['id', 'user', 'public_key', 'created_at', 'updated_at']
@@ -43,8 +44,6 @@ class TransactionAdmin(admin.ModelAdmin):
 
         accounts_sum = sum([a.balance for a in accounts])
         transactions_grouped = models.Transaction.objects.grouped_month()
-
-        pprint(transactions_grouped)
 
         return render(request, 'admin/transactions.html', {
             "accounts": accounts,
