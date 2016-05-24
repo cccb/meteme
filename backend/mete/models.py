@@ -1,5 +1,7 @@
 from __future__ import unicode_literals
 
+from collections import OrderedDict
+
 from django.db import models
 from django.conf import settings
 
@@ -86,6 +88,47 @@ class KeyPair(models.Model):
     updated_at = models.DateTimeField(auto_now=True, blank=True)
 
 
+class TransactionManager(models.Manager):
+    def get_queryset(self):
+        """
+        Override default queryset to order transactions
+        by date DESC
+        """
+        qs = super(TransactionManager, self).get_queryset()
+        qs = qs.order_by('-created_at')
+        return qs
+
+
+    def grouped(self):
+        transactions = self.get_queryset()
+
+        groups = OrderedDict()
+        for transaction in transactions:
+            date = transaction.created_at
+            date = date.replace(hour=0, minute=0, second=0, microsecond=0)
+
+            if groups.get(date) is None:
+                groups[date] = []
+
+            groups[date].append(transaction)
+
+        return groups
+
+
+    def grouped_month(self):
+        transactions = self.get_queryset()
+
+        groups = OrderedDict()
+        for transaction in transactions:
+            key = (transaction.created_at.year, transaction.created_at.month)
+            if groups.get(key) is None:
+                groups[key] = []
+
+            groups[key].append(transaction)
+
+        return groups
+
+
 class Transaction(models.Model):
     """
     Log Transactions.
@@ -103,7 +146,8 @@ class Transaction(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True, blank=True)
 
+    objects = TransactionManager()
+
 
 class Settings(SingletonModel):
     price_set = models.ForeignKey('store.PriceSet', null=True, blank=False, default=1)
-

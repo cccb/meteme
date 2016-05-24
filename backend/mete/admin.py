@@ -1,7 +1,12 @@
 from django.contrib import admin
+from django.http import HttpResponse
+from django.shortcuts import render
+
 from solo.admin import SingletonModelAdmin
 
 import models
+
+from pprint import pprint
 
 class AccountAdmin(admin.ModelAdmin):
     list_display = ['id', 'user', 'balance', 'created_at', 'updated_at',
@@ -29,20 +34,37 @@ class TransactionAdmin(admin.ModelAdmin):
         return actions
 
 
+    def changelist_view(self, request, extra_context=None):
+        """
+        Override changelist view
+        """
+        transactions = models.Transaction.objects.all()
+        accounts = models.Account.objects.all()
+
+        accounts_sum = sum([a.balance for a in accounts])
+        transactions_grouped = models.Transaction.objects.grouped_month()
+
+        pprint(transactions_grouped)
+
+        return render(request, 'admin/transactions.html', {
+            "accounts": accounts,
+            "accounts_sum": accounts_sum,
+            "transactions": transactions,
+            "transactions_grouped": transactions_grouped,
+        })
+
     def has_add_permission(self, request, obj=None):
         return False
 
     def has_delete_permission(self, request, obj=None):
         return False
 
+    class Meta:
+        verbose_name = 'Matekasse'
+
 
 class SettingsAdmin(SingletonModelAdmin):
-
-    def __unicode__(self):
-        return 'Mete98 (ME) Configuration'
-
-    class Meta:
-        verbose_name = 'Mete98 (ME) Configuration'
+    pass
 
 
 # Register model admins

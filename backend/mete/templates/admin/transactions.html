@@ -1,0 +1,82 @@
+{% extends 'admin/base_site.html' %}
+{% load i18n admin_urls admin_list admin_static %}
+
+
+{% block extrastyle %}
+  {{ block.super }}
+  <link rel="stylesheet" type="text/css" href="{% static "admin/css/changelists.css" %}" />
+  {% if cl.formset %}
+    <link rel="stylesheet" type="text/css" href="{% static "admin/css/forms.css" %}" />
+  {% endif %}
+  {% if cl.formset or action_form %}
+    <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
+  {% endif %}
+  {{ media.css }}
+  {% if not actions_on_top and not actions_on_bottom %}
+    <style>
+      #changelist table thead th:first-child {width: inherit}
+    </style>
+  {% endif %}
+
+  <style type="text/css">
+    .transactions-table {
+      width: 100%;
+    }
+  </style>
+
+{% endblock %}
+
+{% block bodyclass %}{{ block.super }} app-mete model-transactions change-list{% endblock %}
+
+{% if not is_popup %}
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+<a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+&rsaquo; <a href="{% url 'admin:app_list' app_label='mete' %}">Mete</a>
+&rsaquo; Transactions
+</div>
+{% endblock %}
+{% endif %}
+
+{% block coltype %}flex{% endblock %}
+
+{% block content %}
+  <div id="content-main">
+
+    <h1>Matekasse</h1>
+    Accounts: {{accounts|length}}<br />
+    Kassenstand: {{accounts_sum}}<br />
+    Transactions: {{transactions|length}}<br />
+
+    <br />
+    <h1>Transaktionen</h1>
+    <div class="transactions-list">
+      {% for date_group, transactions in transactions_grouped.iteritems %}
+
+       <h2>{{date_group.1}}.{{date_group.0}}</h2>
+
+       <table class="transactions-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Date</th>
+            <th>Amount</th>
+            <th>Product</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for transaction in transactions %}
+          <tr>
+            <td>{{transaction.id}}</td>
+            <td>{{transaction.created_at}}</td>
+            <td>{{transaction.amount}}</td>
+            <td>{{transaction.product_name|default:''}}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+       </table>
+     {% endfor %}
+    </div><!-- End Transactions List -->
+
+  </div><!-- End content main -->
+{% endblock %}
