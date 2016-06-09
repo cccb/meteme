@@ -1,0 +1,13 @@
+
+[Unit]
+Description=Mete 95 ME Server
+After=network.target
+
+[Service]
+User=meteme
+WorkingDirectory=/opt/ccc/meteme/meteme
+Environment=HOME=/opt/ccc/meteme
+ExecStart=/opt/ccc/meteme/meteme/bin/start_uwsgi
+
+[Install]
+WantedBy=multi-user.target
