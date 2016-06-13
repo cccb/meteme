@@ -8,3 +8,4 @@ py-moneyed==0.6.0
 six==1.10.0
 sqlparse==0.1.19
 wheel==0.24.0
+uWSGI>=2.0.11
