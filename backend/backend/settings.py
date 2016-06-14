@@ -35,7 +35,7 @@ SECRET_KEY = config.get('security', 'secret_key')
 DEBUG = (config.get('application', 'debug') == 'true')
 
 ALLOWED_HOSTS = [
-    host.strip for host in config.get('security', 'allowed_hosts').split(',')
+    host.strip() for host in config.get('security', 'allowed_hosts').split(',')
 ]
 
 
