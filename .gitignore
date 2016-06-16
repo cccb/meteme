@@ -53,3 +53,6 @@ RPMS/
 *.pid
 
 *.sqlite3
+
+/var/log/*.log
+
