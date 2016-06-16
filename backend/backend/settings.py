@@ -152,6 +152,13 @@ except:
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, "static/")
+
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+)
+
 
 MEDIA_ROOT = config.get('media', 'root')
 MEDIA_URL = config.get('media', 'url')

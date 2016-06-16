@@ -55,4 +55,4 @@ RPMS/
 *.sqlite3
 
 /var/log/*.log
-
+backend/static/
