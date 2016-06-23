@@ -21,8 +21,7 @@ class UserAccountViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.UserSerializer
     queryset = auth_models.User.objects.filter(
         is_active=True,
-        account__is_disabled=False).extra({'username': 'TRIM(username)'
-                                           }).order_by('username')
+        account__is_disabled=False).order_by('username')
 
     @detail_route(methods=['post'])
     def deposit(self, request, pk=None):
