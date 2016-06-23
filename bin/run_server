@@ -3,7 +3,7 @@
 BASEDIR=$(dirname $0)
 APPDIR=$BASEDIR/../backend
 
-PORT=8001
+PORT=8080
 
 echo "[i] Loading virtualenv (venv)"
 source $APPDIR/../venv/bin/activate
