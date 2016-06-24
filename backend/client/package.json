@@ -1,0 +1,8 @@
+{
+  "name": "client",
+  "version": "1.0.0",
+  "description": "Mete98 ME WebClient",
+  "main": "static/client/index.html",
+  "author": "Matthias Hannig",
+  "license": "MIT"
+}
