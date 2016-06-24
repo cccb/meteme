@@ -4,5 +4,25 @@
   "description": "Mete98 ME WebClient",
   "main": "static/client/index.html",
   "author": "Matthias Hannig",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "babel": "^6.5.2",
+    "babel-eslint": "^6.1.0",
+    "gulp": "^3.9.1",
+    "gulp-bower": "0.0.13",
+    "gulp-clean": "^0.3.2",
+    "gulp-concat": "^2.6.0",
+    "gulp-cssmin": "^0.1.7",
+    "gulp-flatten": "^0.3.0",
+    "gulp-react": "^3.1.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-sass": "^2.3.2",
+    "gulp-uglify": "^1.5.4",
+    "gulp-util": "^3.0.7",
+    "jshint": "^2.9.2",
+    "react": "^15.1.0",
+    "react-dom": "^15.1.0",
+    "react-redux": "^4.4.5",
+    "redux": "^3.5.2"
+  }
 }

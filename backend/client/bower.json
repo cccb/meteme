@@ -1,0 +1,17 @@
+{
+  "name": "client",
+  "description": "Mete98 ME WebClient",
+  "main": "static/client/index.html",
+  "authors": [
+    "Matthias Hannig"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/mhannig/meteme",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
