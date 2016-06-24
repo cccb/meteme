@@ -7,7 +7,11 @@
   "license": "MIT",
   "devDependencies": {
     "babel": "^6.5.2",
+    "babel-core": "^6.10.4",
     "babel-eslint": "^6.1.0",
+    "babel-loader": "^6.2.4",
+    "babel-preset-es2016": "^6.0.11",
+    "babel-preset-react": "^6.5.0",
     "gulp": "^3.9.1",
     "gulp-bower": "0.0.13",
     "gulp-clean": "^0.3.2",
@@ -23,6 +27,8 @@
     "react": "^15.1.0",
     "react-dom": "^15.1.0",
     "react-redux": "^4.4.5",
-    "redux": "^3.5.2"
+    "react-router-redux": "^4.0.5",
+    "redux": "^3.5.2",
+    "webpack": "^1.13.1"
   }
 }
