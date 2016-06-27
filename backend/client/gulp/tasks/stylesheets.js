@@ -16,9 +16,9 @@ gulp.task('stylesheets', function(){
   // Compile less files
   gulp.src('assets/scss/*.scss')
     .pipe(sass().on('error', sass.logError))
-    .pipe(gulp.dest('static/crm/css/'))
+    .pipe(gulp.dest('static/client/css/'))
     .pipe(cssmin())
     .pipe(rename({suffix: '.min'}))
-    .pipe(gulp.dest('static/crm/css/'));
+    .pipe(gulp.dest('static/client/css/'));
 });
 

@@ -27,7 +27,7 @@ gulp.task('assets', function(){
   // Copy fonts from bower components
   gulp.src('bower_components/**/*.{otf,eot,svg,ttf,woff,woff2}')
     .pipe(flatten())
-    .pipe(gulp.dest('static/crm/fonts/'));
+    .pipe(gulp.dest('static/client/fonts/'));
 
 });
 
