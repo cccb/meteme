@@ -16,12 +16,12 @@ gulp.task('assets', function(){
   var assets = ['images'];
   assets.forEach(function(asset){
     gulp.src('assets/'+asset+'/**')
-      .pipe(gulp.dest('static/crm/'+asset));
+      .pipe(gulp.dest('static/client/'+asset));
   });
 
   // Copy local fonts
   gulp.src('assets/fonts/**')
-    .pipe(gulp.dest('static/crm/fonts/'));
+    .pipe(gulp.dest('static/client/fonts/'));
 
 
   // Copy fonts from bower components
