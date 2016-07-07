@@ -3,43 +3,47 @@
  * Mete98 ME Client Application
  */
 
-import React from 'react';
+import React, { PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 
 import { createStore, combineReducers, applyMiddleware } from 'redux'
-import { Provider } from 'react-redux'
-import { Router, Route, IndexRoute, hashHistory } from 'react-router'
+import { Provider, connect } from 'react-redux'
+import { Router, Route, IndexRoute, hashHistory, Link } from 'react-router'
 import { syncHistoryWithStore, routerReducer } from 'react-router-redux'
 
+import combinedReducer from './reducers'
 
-// Add the reducer to your store on the `routing` key
-const store = createStore(
-  combineReducers({
-    routing: routerReducer
-  })
-);
+import {FnordView} from './components/fnord'
+import Nav from './components/nav'
 
+// Setup client
+const store = createStore(combinedReducer);
 const history = syncHistoryWithStore(hashHistory, store);
 
 
-var Foo = React.createClass({
-  render: () => {
-    return(<div>Foo</div>);
-  }
-});
+window.setInterval(function() {
+  store.dispatch({
+    type: 'ADD_FNORD'
+  });
+}, 1000);
 
-var Bar = React.createClass({
-  render: () => {
-    return(<div>Bar</div>);
-  }
-});
 
-var Baz = React.createClass({
-  render: () => {
-    return(<div>Baz</div>);
-  }
-});
 
+var MainLayout = React.createClass({
+  render: function() {
+    return(
+      <div>
+        <Nav />
+        <main>
+          {this.props.children}
+        </main>
+        <footer>
+          (c) 1996-1999 Metigsoft Corp. All rights reseved.
+        </footer>
+     </div>
+    );
+  }
+})
 
 
 /**
@@ -50,10 +54,8 @@ var MeteClient = React.createClass({
     return(
       <Provider store={store}>
           <Router history={history}>
-            <Route path="/" component={Baz}>
-            <Route path="/foo" component={Foo}/>
-            <Route path="/bar" component={Bar}/>
-          </Route>
+            <Route path="/" component={MainLayout}>
+           </Route>
          </Router>
       </Provider>
     );
@@ -61,6 +63,7 @@ var MeteClient = React.createClass({
 
 });
 
+              // <IndexRoute component={Baz} />
 
 var mountNode = document.getElementById('meteclient');
 ReactDOM.render(<MeteClient />, mountNode);

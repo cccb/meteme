@@ -6,6 +6,7 @@
   "author": "Matthias Hannig",
   "license": "MIT",
   "devDependencies": {
+    "axios": "^0.12.0",
     "babel": "^6.5.2",
     "babel-core": "^6.10.4",
     "babel-eslint": "^6.1.0",
@@ -38,5 +39,8 @@
     "run-sequence": "^1.2.1",
     "webpack": "^1.13.1",
     "webpack-stream": "^3.2.0"
+  },
+  "dependencies": {
+    "redux-form": "^5.3.1"
   }
 }

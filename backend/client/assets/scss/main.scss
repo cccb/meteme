@@ -3,3 +3,40 @@
 @import '../../bower_components/bootstrap/dist/css/bootstrap';
 @import 'theme/bootstrap-theme';
 
+@import 'fonts/comfortaa';
+
+
+html, body {
+  background: url('../images/zwartevilt.png') 0px 0px repeat;
+}
+
+.navbar-brand {
+  font-family: comfortaa;
+  position: relative;
+
+  .trade {
+    position: absolute;
+    right: 0px;
+    font-size: 8px;
+    top: 5px;
+  }
+}
+
+footer {
+  position: absolute;
+  bottom: 0px;
+  background: #000000;
+  color: #888;
+  width: 100%;
+  text-align: center;
+  padding: 5px;
+  font-size: 10px;
+}
+
+main {
+  margin-top: 50px + 30px;
+}
+
+.navbar-main {
+  background: #000000;
+}

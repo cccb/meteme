@@ -7015,3 +7015,34 @@ fieldset[disabled] .btn-danger.active {
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 0 rgba(255, 255, 255, 0.1); }
 
 /*# sourceMappingURL=bootstrap-theme.css.map */
+@font-face {
+  font-family: 'comfortaa';
+  src: url("../fonts/Comfortaa-Regular.ttf") format("truetype"); }
+
+html, body {
+  background: url("../images/zwartevilt.png") 0px 0px repeat; }
+
+.navbar-brand {
+  font-family: comfortaa;
+  position: relative; }
+  .navbar-brand .trade {
+    position: absolute;
+    right: 0px;
+    font-size: 8px;
+    top: 5px; }
+
+footer {
+  position: absolute;
+  bottom: 0px;
+  background: #000000;
+  color: #888;
+  width: 100%;
+  text-align: center;
+  padding: 5px;
+  font-size: 10px; }
+
+main {
+  margin-top: 80px; }
+
+.navbar-main {
+  background: #000000; }

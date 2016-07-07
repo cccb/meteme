@@ -62,52 +62,50 @@
 
 	var _reactRouterRedux = __webpack_require__(250);
 
+	var _reducers = __webpack_require__(255);
+
+	var _reducers2 = _interopRequireDefault(_reducers);
+
+	var _fnord = __webpack_require__(258);
+
+	var _nav = __webpack_require__(259);
+
+	var _nav2 = _interopRequireDefault(_nav);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	// Add the reducer to your store on the `routing` key
-
+	// Setup client
+	var store = (0, _redux.createStore)(_reducers2.default);
 	/**
 	 * Mete98 ME Client Application
 	 */
 
-	var store = (0, _redux.createStore)((0, _redux.combineReducers)({
-	  routing: _reactRouterRedux.routerReducer
-	}));
-
 	var history = (0, _reactRouterRedux.syncHistoryWithStore)(_reactRouter.hashHistory, store);
 
-	var Foo = _react2.default.createClass({
-	  displayName: 'Foo',
+	window.setInterval(function () {
+	  store.dispatch({
+	    type: 'ADD_FNORD'
+	  });
+	}, 1000);
+
+	var MainLayout = _react2.default.createClass({
+	  displayName: 'MainLayout',
 
 	  render: function render() {
 	    return _react2.default.createElement(
 	      'div',
 	      null,
-	      'Foo'
-	    );
-	  }
-	});
-
-	var Bar = _react2.default.createClass({
-	  displayName: 'Bar',
-
-	  render: function render() {
-	    return _react2.default.createElement(
-	      'div',
-	      null,
-	      'Bar'
-	    );
-	  }
-	});
-
-	var Baz = _react2.default.createClass({
-	  displayName: 'Baz',
-
-	  render: function render() {
-	    return _react2.default.createElement(
-	      'div',
-	      null,
-	      'Baz'
+	      _react2.default.createElement(_nav2.default, null),
+	      _react2.default.createElement(
+	        'main',
+	        null,
+	        this.props.children
+	      ),
+	      _react2.default.createElement(
+	        'footer',
+	        null,
+	        '(c) 1996-1999 Metigsoft Corp. All rights reseved.'
+	      )
 	    );
 	  }
 	});
@@ -124,16 +122,13 @@
 	      _react2.default.createElement(
 	        _reactRouter.Router,
 	        { history: history },
-	        _react2.default.createElement(
-	          _reactRouter.Route,
-	          { path: '/', component: Baz },
-	          _react2.default.createElement(_reactRouter.Route, { path: '/foo', component: Foo }),
-	          _react2.default.createElement(_reactRouter.Route, { path: '/bar', component: Bar })
-	        )
+	        _react2.default.createElement(_reactRouter.Route, { path: '/', component: MainLayout })
 	      )
 	    );
 	  }
 	});
+
+	// <IndexRoute component={Baz} />
 
 	var mountNode = document.getElementById('meteclient');
 	_reactDom2.default.render(_react2.default.createElement(MeteClient, null), mountNode);
@@ -27804,6 +27799,288 @@
 	    };
 	  };
 	}
+
+/***/ },
+/* 255 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _redux = __webpack_require__(168);
+
+	var _reactRouterRedux = __webpack_require__(250);
+
+	var _auth = __webpack_require__(256);
+
+	var _auth2 = _interopRequireDefault(_auth);
+
+	var _fnord = __webpack_require__(257);
+
+	var _fnord2 = _interopRequireDefault(_fnord);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	// == Export combined reducer
+	exports.default = (0, _redux.combineReducers)({
+	  routing: _reactRouterRedux.routerReducer,
+	  auth: _auth2.default,
+	  fnord: _fnord2.default
+	});
+
+/***/ },
+/* 256 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	// Auth reducer
+	var initialAuthState = {
+	  isAuthenticated: false,
+	  isAuthenticating: false,
+	  user: {
+	    id: 0,
+	    name: ""
+	  }
+	};
+
+	var authReducer = function authReducer() {
+	  var state = arguments.length <= 0 || arguments[0] === undefined ? initialAuthState : arguments[0];
+	  var action = arguments[1];
+
+
+	  switch (action.type) {
+	    case 'AUTHENTICATION_REQUEST':
+	      return Object.assign({}, state, {
+	        isAuthenticating: true
+	      });
+
+	    case 'AUTHENTICATION_SUCCESS':
+	      return Object.assign({}, state, {
+	        isAuthenticating: false,
+	        isAuthenticated: true,
+	        user: action.user
+	      });
+
+	    case 'AUTHENTICATION_ERROR':
+	      return Object.assign({}, state, {
+	        isAuthenticating: false,
+	        isAuthenticated: false,
+	        error: action.error
+	      });
+	  }
+	  return state;
+	};
+
+	// == Exports
+	exports.default = authReducer;
+
+/***/ },
+/* 257 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+
+	// Just some reducer test...
+	var fnordReducer = function fnordReducer() {
+	  var state = arguments.length <= 0 || arguments[0] === undefined ? 0 : arguments[0];
+	  var action = arguments[1];
+
+	  if (action.type == 'ADD_FNORD') {
+	    return state + 1;
+	  } else if (action.type == 'REMOVE_FNORD') {
+	    return state - 1;
+	  }
+
+	  return state;
+	};
+
+	exports.default = fnordReducer;
+
+/***/ },
+/* 258 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.FnordView = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRedux = __webpack_require__(181);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Incor = function (_Component) {
+	  _inherits(Incor, _Component);
+
+	  function Incor() {
+	    _classCallCheck(this, Incor);
+
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(Incor).apply(this, arguments));
+	  }
+
+	  _createClass(Incor, [{
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'button',
+	        { onClick: this.props.onClick },
+	        'Moar!'
+	      );
+	    }
+	  }]);
+
+	  return Incor;
+	}(_react.Component);
+
+	var Fnordor = function (_Component2) {
+	  _inherits(Fnordor, _Component2);
+
+	  function Fnordor() {
+	    _classCallCheck(this, Fnordor);
+
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(Fnordor).apply(this, arguments));
+	  }
+
+	  _createClass(Fnordor, [{
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        null,
+	        _react2.default.createElement(
+	          'p',
+	          null,
+	          'Fnord: ',
+	          this.props.fnord
+	        ),
+	        _react2.default.createElement(Incor, { onClick: this.props.incClick })
+	      );
+	    }
+	  }]);
+
+	  return Fnordor;
+	}(_react.Component);
+
+	Fnordor.propTypes = {
+	  fnord: _react.PropTypes.number.isRequired,
+	  incClick: _react.PropTypes.func.isRequired
+	};
+
+	var FnordView = exports.FnordView = (0, _reactRedux.connect)(function (state) {
+	  return {
+	    fnord: state.fnord
+	  };
+	}, function (dispatch) {
+	  return {
+	    incClick: function incClick() {
+	      dispatch({
+	        type: 'ADD_FNORD'
+	      });
+	    }
+	  };
+	})(Fnordor);
+
+/***/ },
+/* 259 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _react2.default.createClass({
+	  displayName: "nav",
+
+	  render: function render() {
+	    return _react2.default.createElement(
+	      "nav",
+	      { className: "navbar navbar-inverse navbar-fixed-top navbar-main" },
+	      _react2.default.createElement(
+	        "div",
+	        { className: "navbar-header" },
+	        _react2.default.createElement(
+	          "button",
+	          { type: "button",
+	            className: "navbar-toggle collapsed",
+	            "data-toggle": "collapse",
+	            "data-target": "#navbar",
+	            "aria-expanded": "false",
+	            "aria-controls": "navbar" },
+	          _react2.default.createElement(
+	            "span",
+	            { className: "sr-only" },
+	            "Toggle navigation"
+	          ),
+	          _react2.default.createElement("span", { className: "icon-bar" }),
+	          _react2.default.createElement("span", { className: "icon-bar" }),
+	          _react2.default.createElement("span", { className: "icon-bar" })
+	        ),
+	        _react2.default.createElement(
+	          "a",
+	          { className: "navbar-brand", href: "#" },
+	          "Mete98 ME",
+	          _react2.default.createElement(
+	            "span",
+	            { className: "trade" },
+	            "TM"
+	          )
+	        )
+	      ),
+	      _react2.default.createElement(
+	        "div",
+	        { className: "collapse navbar-collapse" },
+	        _react2.default.createElement(
+	          "ul",
+	          { className: "nav navbar-nav pull-right" },
+	          _react2.default.createElement(
+	            "li",
+	            null,
+	            _react2.default.createElement(
+	              "a",
+	              { href: "" },
+	              "Logout"
+	            )
+	          )
+	        )
+	      )
+	    );
+	  }
+	});
 
 /***/ }
 /******/ ]);
