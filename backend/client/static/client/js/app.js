@@ -72,14 +72,19 @@
 
 	var _nav2 = _interopRequireDefault(_nav);
 
+	var _userProfile = __webpack_require__(260);
+
+	var _userProfile2 = _interopRequireDefault(_userProfile);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	// Setup client
-	var store = (0, _redux.createStore)(_reducers2.default);
+
 	/**
 	 * Mete98 ME Client Application
 	 */
 
+	var store = (0, _redux.createStore)(_reducers2.default);
 	var history = (0, _reactRouterRedux.syncHistoryWithStore)(_reactRouter.hashHistory, store);
 
 	window.setInterval(function () {
@@ -99,7 +104,8 @@
 	      _react2.default.createElement(
 	        'main',
 	        null,
-	        this.props.children
+	        this.props.children,
+	        _react2.default.createElement(_userProfile2.default, null)
 	      ),
 	      _react2.default.createElement(
 	        'footer',
@@ -28081,6 +28087,136 @@
 	    );
 	  }
 	});
+
+/***/ },
+/* 260 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRedux = __webpack_require__(181);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	/**
+	 * User View 
+	 * ---------
+	 * 
+	 * Show user view with profile image and 
+	 * account info.
+	 */
+
+	var ProfileImage = _react2.default.createClass({
+	  displayName: 'ProfileImage',
+
+	  // Render profile image from user profile
+	  render: function render() {
+	    var imageUrl = this.props.avatarUrl;
+	    return _react2.default.createElement(
+	      'div',
+	      { className: 'user-profile-avatar' },
+	      _react2.default.createElement('img', { src: '{avatarUrl}' })
+	    );
+	  }
+	});
+
+	var ProfileInfo = _react2.default.createClass({
+	  displayName: 'ProfileInfo',
+	  render: function render() {
+	    var user = this.props.user;
+
+	    var fullName = undefined;
+	    if (user.first_name != '' || user.last_name != '') {
+	      fullName = _react2.default.createElement(
+	        'p',
+	        { className: 'user-profile-fullname' },
+	        user.first_name,
+	        ' ',
+	        user.last_name
+	      );
+	    }
+
+	    var email = undefined;
+	    if (user.email != '') {
+	      email = _react2.default.createElement(
+	        'p',
+	        { className: 'user-profile-email' },
+	        user.email
+	      );
+	    }
+
+	    return _react2.default.createElement(
+	      'div',
+	      { className: 'user-profile-info' },
+	      _react2.default.createElement(
+	        'p',
+	        { className: 'user-profile-username' },
+	        user.username
+	      ),
+	      fullName,
+	      email
+	    );
+	  }
+	});
+
+	var UserProfileView = _react2.default.createClass({
+	  displayName: 'UserProfileView',
+	  render: function render() {
+	    // Render User profile:
+	    //  - Name
+	    //  - Avatar
+	    //  - Account
+	    var user = this.props.user;
+	    var account = user.account;
+
+	    return _react2.default.createElement(
+	      'div',
+	      { className: 'user-profile' },
+	      _react2.default.createElement(
+	        'div',
+	        { className: 'row' },
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'col-sm-5' },
+	          _react2.default.createElement(ProfileImage, { avatarUrl: account.avatar })
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'col-sm-7' },
+	          _react2.default.createElement(ProfileInfo, { user: user })
+	        )
+	      )
+	    );
+	  }
+	});
+
+	// Create user profile container component
+	exports.default = (0, _reactRedux.connect)(function (state) {
+	  return {
+	    user: {
+	      first_name: 'Ben',
+	      last_name: 'Utzer',
+	      email: 'ben.utzer@aol.com',
+	      username: 'benutzer',
+
+	      account: {
+	        avatar: "/fnord.gif",
+	        balance: "-0.70 EUR",
+	        locked: false,
+	        created_at: "2016-05-09T14:52:09.249542Z",
+	        updated_at: "2016-05-09T15:11:37.611436Z"
+	      }
+	    }
+	  };
+	})(UserProfileView);
 
 /***/ }
 /******/ ]);

@@ -15,6 +15,7 @@ import combinedReducer from './reducers'
 
 import {FnordView} from './components/fnord'
 import Nav from './components/nav'
+import UserProfile from './components/user-profile'
 
 // Setup client
 const store = createStore(combinedReducer);
@@ -36,6 +37,7 @@ var MainLayout = React.createClass({
         <Nav />
         <main>
           {this.props.children}
+          <UserProfile />
         </main>
         <footer>
           (c) 1996-1999 Metigsoft Corp. All rights reseved.
