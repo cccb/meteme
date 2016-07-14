@@ -1,7 +1,12 @@
 from datetime import datetime
 
+from moneyed import Money
+
 from django.conf.urls import url, include
-from django.contrib.auth import models as auth_models
+from django.contrib.auth import login, logout, \
+                                models as auth_models
+
+from django.contrib.auth.models import AnonymousUser
 
 from rest_framework import routers, status, views
 from rest_framework.decorators import detail_route
@@ -14,20 +19,62 @@ from rest_framework.response import Response
 from mete.models import Account, Transaction
 from store.models import Product
 
+from api import serializers
+from api.serializers import SessionSerializer, UserSerializer, \
+                            AuthenticationSerializer, \
+                            AccountSerializer, DepositSerializer, \
+                            PurchaseSerializer, TransferSerializer
 
 from backend.settings import BACKEND_VERSION
 
-from moneyed import Money
-from api import serializers
 
 from pprint import pprint
 
+class SessionViewSet(GenericViewSet):
+    """ Login / Logout user """
+    permission_classes = [AllowAny]
+    serializer_class = AuthenticationSerializer
+
+    @property
+    def session(self):
+        """ Get current session state """
+        authenticated = type(self.request.user) is not AnonymousUser
+
+        session = {
+            'is_authenticated': authenticated,
+            'user': self.request.user,
+        }
+        return session
+
+
+    def list(self, request):
+        """ Render session """
+        serialized_session = SessionSerializer(self.session)
+        return Response(serialized_session.data)
+
+
+    def create(self, request):
+        """ Create a session with credentials """
+        serializer = AuthenticationSerializer(data=request.data)
+        if serializer.is_valid():
+            # Credentials are valid, let's login the user
+            login(request, serializer.validated_data['user'])
+
+        serialized_session = SessionSerializer(self.session)
+        return Response(serialized_session.data)
+
+
+    def delete(self, request):
+        """ Logout user """
+        logout(request)
+        serialized_session = SessionSerializer(self.session)
+        return Response(serialized_session.data)
+
 
 class UserAccountViewSet(ModelViewSet):
-    """
-    Manage user accounts
-    """
-    serializer_class = serializers.UserSerializer
+    """ Manage user accounts """
+
+    serializer_class = UserSerializer
     queryset = auth_models.User.objects.filter(
         is_active=True,
         account__is_disabled=False).order_by('username')
@@ -39,7 +86,7 @@ class UserAccountViewSet(ModelViewSet):
         """
         user = auth_models.User.objects.get(id=pk)
 
-        serializer = serializers.DepositSerializer(data=request.data)
+        serializer = DepositSerializer(data=request.data)
         if not serializer.is_valid():
             return Response(serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
@@ -219,6 +266,7 @@ class TransactionsLogViewSet(ReadOnlyModelViewSet):
 
 
 router = routers.DefaultRouter()
+router.register('session', SessionViewSet, base_name='session')
 router.register('users', UserAccountViewSet)
 router.register('products', ProductsViewSet)
 router.register('transfers', TransfersViewSet, base_name='transfers')

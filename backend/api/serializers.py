@@ -1,9 +1,9 @@
-
+from django.contrib.auth import authenticate
 from rest_framework.serializers import Serializer, ModelSerializer, \
                                        Field, ImageField, BooleanField, \
                                        IntegerField, CharField, EmailField,\
                                        DictField, PrimaryKeyRelatedField, \
-                                       DateTimeField, \
+                                       DateTimeField, ReadOnlyField, \
                                        ValidationError
 
 from moneyed import Money
@@ -13,6 +13,7 @@ from store import models as store_models
 
 from django.conf import settings
 from django.contrib.auth import models as auth_models
+
 
 
 class AccountNotLocked:
@@ -56,6 +57,7 @@ class MoneyField(Field):
         return Money(amount, currency)
 
 
+
 class AccountSerializer(ModelSerializer):
     balance = MoneyField(default=Money('0.00', 'EUR'), read_only=True)
     avatar = ImageField(read_only=True)
@@ -69,7 +71,13 @@ class AccountSerializer(ModelSerializer):
 
 
 class UserSerializer(ModelSerializer):
+    id = IntegerField(required=False)
+
     email = EmailField(required=False)
+
+    first_name = CharField(required=False)
+    last_name = CharField(required=False)
+
     account = AccountSerializer(many=False, required=False)
 
     def create(self, validated_data):
@@ -227,6 +235,33 @@ class TransferSerializer(Serializer):
         }
 
 
+#
+# == Session / Login
+#
+
+class SessionSerializer(Serializer):
+    """ Serialize a user session """
+    user = UserSerializer()
+    is_authenticated = ReadOnlyField()
+
+
+class AuthenticationSerializer(Serializer):
+    """ Authentication requires credentials """
+    username = CharField()
+    password = CharField(style={'input_type': 'password'})
+
+
+    def validate(self, data):
+        """ Validate credentials """
+        user = authenticate(username=data['username'],
+                            password=data['password'])
+
+        if not user:
+            raise ValidationError('Invalid credentials')
+
+        data['user'] = user
+
+        return data
 
 #
 # == Stats Serializers
@@ -263,4 +298,3 @@ class TransactionSerializer(Serializer):
     product_name = CharField()
     product = ProductSerializer()
     created_at = DateTimeField()
-

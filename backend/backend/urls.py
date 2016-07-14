@@ -25,5 +25,5 @@ urlpatterns = [
     url(r'^api/', include(api_urls)),
     url(r'^client/', include(client_urls)),
 
-    url(r'^/?$', RedirectView.as_view(url='/static/client/index.html')),
+    url(r'^$', RedirectView.as_view(url='/static/client/index.html')),
 ]
