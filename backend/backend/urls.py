@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
+from django.views.generic.base import RedirectView
 
 from api import urls as api_urls
 from client import urls as client_urls
@@ -23,4 +24,6 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^api/', include(api_urls)),
     url(r'^client/', include(client_urls)),
+
+    url(r'^$', RedirectView.as_view(url='/static/client/index.html')),
 ]

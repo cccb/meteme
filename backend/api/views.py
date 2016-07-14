@@ -1,24 +1,80 @@
-from django.conf.urls import url, include
-from django.contrib.auth import models as auth_models
-
-from rest_framework import routers, viewsets, status, views
-from rest_framework.response import Response
-from rest_framework.decorators import detail_route
-
-from mete import models as mete_models
-from store import models as store_models
+from datetime import datetime
 
 from moneyed import Money
+
+from django.conf.urls import url, include
+from django.contrib.auth import login, logout, \
+                                models as auth_models
+
+from django.contrib.auth.models import AnonymousUser
+
+from rest_framework import routers, status, views
+from rest_framework.decorators import detail_route
+from rest_framework.viewsets import ModelViewSet, GenericViewSet,\
+                                    ReadOnlyModelViewSet
+
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.response import Response
+
+from mete.models import Account, Transaction
+from store.models import Product
+
 from api import serializers
+from api.serializers import SessionSerializer, UserSerializer, \
+                            AuthenticationSerializer, \
+                            AccountSerializer, DepositSerializer, \
+                            PurchaseSerializer, TransferSerializer
+
+from backend.settings import BACKEND_VERSION
+
 
 from pprint import pprint
 
+class SessionViewSet(GenericViewSet):
+    """ Login / Logout user """
+    permission_classes = [AllowAny]
+    serializer_class = AuthenticationSerializer
 
-class UserAccountViewSet(viewsets.ModelViewSet):
-    """
-    Manage user accounts
-    """
-    serializer_class = serializers.UserSerializer
+    @property
+    def session(self):
+        """ Get current session state """
+        authenticated = type(self.request.user) is not AnonymousUser
+
+        session = {
+            'is_authenticated': authenticated,
+            'user': self.request.user,
+        }
+        return session
+
+
+    def list(self, request):
+        """ Render session """
+        serialized_session = SessionSerializer(self.session)
+        return Response(serialized_session.data)
+
+
+    def create(self, request):
+        """ Create a session with credentials """
+        serializer = AuthenticationSerializer(data=request.data)
+        if serializer.is_valid():
+            # Credentials are valid, let's login the user
+            login(request, serializer.validated_data['user'])
+
+        serialized_session = SessionSerializer(self.session)
+        return Response(serialized_session.data)
+
+
+    def delete(self, request):
+        """ Logout user """
+        logout(request)
+        serialized_session = SessionSerializer(self.session)
+        return Response(serialized_session.data)
+
+
+class UserAccountViewSet(ModelViewSet):
+    """ Manage user accounts """
+
+    serializer_class = UserSerializer
     queryset = auth_models.User.objects.filter(
         is_active=True,
         account__is_disabled=False).order_by('username')
@@ -30,7 +86,7 @@ class UserAccountViewSet(viewsets.ModelViewSet):
         """
         user = auth_models.User.objects.get(id=pk)
 
-        serializer = serializers.DepositSerializer(data=request.data)
+        serializer = DepositSerializer(data=request.data)
         if not serializer.is_valid():
             return Response(serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
@@ -112,18 +168,18 @@ class UserAccountViewSet(viewsets.ModelViewSet):
         model = auth_models.User
 
 
-class ProductsViewSet(viewsets.ReadOnlyModelViewSet):
+class ProductsViewSet(ReadOnlyModelViewSet):
     """
     Get Products (readonly API)
     """
-    queryset = store_models.Product.objects.filter(active=True)
+    queryset = Product.objects.filter(active=True)
     serializer_class = serializers.ProductSerializer
 
     class Meta:
-        model = store_models.Product
+        model = Product
 
 
-class TransfersViewSet(viewsets.GenericViewSet):
+class TransfersViewSet(GenericViewSet):
     """
     Handle user to user transfers
     """
@@ -150,7 +206,69 @@ class TransfersViewSet(viewsets.GenericViewSet):
         })
 
 
+class StatsViewSet(GenericViewSet):
+    """
+    Handle stats:
+      show: transactions, cash position, amount of
+      donations. Overall and for the current month.
+
+    This view set is public and can be viewed without being logged in.
+    """
+    permission_classes = [AllowAny]
+
+    def list(self, request):
+        """ Show stats """
+        now = datetime.now()
+        current_month = (now.year, now.month)
+
+        user_count = auth_models.User.objects.filter(
+            is_active=True, account__is_disabled=False).count()
+
+        accounts = Account.objects.all()
+        accounts_sum = sum([a.balance for a in accounts])
+
+        transactions_count = Transaction.objects.all().count()
+        transactions_months = Transaction.objects.grouped_month()
+        transactions_current_count = len(transactions_months.get(current_month,
+                                                                 []))
+
+        donations = Transaction.objects.donations()
+        donations_total = sum(abs(d.amount) for d in donations)
+        donations_grouped = Transaction.objects.donations_grouped_months()
+        donations_current_sum = sum(
+            abs(d.amount) for d in donations_grouped.get(current_month, []))
+
+        stats = {
+            'money_gauge': accounts_sum,
+            'donations': {
+                'total': donations_total,
+                'current_month': donations_current_sum,
+            },
+            'transactions': {
+                'total': transactions_count,
+                'current_month': transactions_current_count,
+            },
+            'users': user_count,
+            'backend_version': BACKEND_VERSION,
+        }
+
+        serialized_stats = serializers.StatsSerializer(stats)
+        return Response(serialized_stats.data)
+
+
+
+class TransactionsLogViewSet(ReadOnlyModelViewSet):
+    """ Get list of all transactions """
+    permission_classes = [AllowAny]
+    queryset = Transaction.objects.all()
+
+    serializer_class = serializers.TransactionSerializer
+
+
 router = routers.DefaultRouter()
+router.register('session', SessionViewSet, base_name='session')
 router.register('users', UserAccountViewSet)
 router.register('products', ProductsViewSet)
 router.register('transfers', TransfersViewSet, base_name='transfers')
+router.register('stats', StatsViewSet, base_name='stats')
+router.register('transactions', TransactionsLogViewSet, base_name='transactions')

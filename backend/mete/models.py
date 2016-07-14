@@ -99,6 +99,25 @@ class TransactionManager(models.Manager):
         return qs
 
 
+    def donations(self):
+        transactions = self.get_queryset()
+        return transactions.filter(product__isnull=False)
+
+
+    def donations_grouped_months(self):
+        """ Get donations, grouped by month """
+        donations = self.donations()
+
+        groups = OrderedDict()
+        for transaction in donations:
+            key = (transaction.created_at.year, transaction.created_at.month)
+            if groups.get(key) is None:
+                groups[key] = []
+
+            groups[key].append(transaction)
+
+        return groups
+
     def grouped(self):
         transactions = self.get_queryset()
 
