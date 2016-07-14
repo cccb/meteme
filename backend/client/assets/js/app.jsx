@@ -26,7 +26,7 @@ const loggerMiddleware = createLogger()
 
 // Setup client
 const store = createStore(combinedReducer, applyMiddleware(
-  thunkMiddleware, loggerMiddleware
+  thunkMiddleware //, loggerMiddleware
 ));
 
 const history = syncHistoryWithStore(hashHistory, store);
