@@ -10,17 +10,7 @@ const GraphView = React.createClass({
 
     var data = [];
     var config = {
-      chart: {
-        type: 'spline'
-      },
       title: false,
-      plotOptions: {
-        spline: {
-          marker: {
-            enabled: true
-          }
-        }
-      },
       xAxis: {
             type: 'datetime',
             dateTimeLabelFormats: { // don't display the dummy year
