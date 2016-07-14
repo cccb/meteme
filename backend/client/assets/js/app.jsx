@@ -8,41 +8,48 @@ import ReactDOM from 'react-dom';
 
 import { createStore, combineReducers, applyMiddleware } from 'redux'
 import { Provider, connect } from 'react-redux'
+
+import thunkMiddleware from 'redux-thunk'
+import createLogger from 'redux-logger'
+
 import { Router, Route, IndexRoute, hashHistory, Link } from 'react-router'
 import { syncHistoryWithStore, routerReducer } from 'react-router-redux'
 
+
 import combinedReducer from './reducers'
 
-import {FnordView} from './components/fnord'
-import Nav from './components/nav'
-import UserProfile from './components/user-profile'
+import StatsPage from './components/stats-page'
+
+
+// Setup logger
+const loggerMiddleware = createLogger()
 
 // Setup client
-const store = createStore(combinedReducer);
+const store = createStore(combinedReducer, applyMiddleware(
+  thunkMiddleware, loggerMiddleware
+));
+
 const history = syncHistoryWithStore(hashHistory, store);
-
-
-window.setInterval(function() {
-  store.dispatch({
-    type: 'ADD_FNORD'
-  });
-}, 1000);
-
 
 
 var MainLayout = React.createClass({
   render: function() {
     return(
       <div>
-        <Nav />
-        <main>
+        <main className="container-main">
           {this.props.children}
-          <UserProfile />
+          <div className="row">
+            <div className="col-md-5">
+            </div /* end col left */ >
+            <div className="col-md-5 col-md-offset-1">
+              {this.props.aside}
+            </div /* end col right */>
+          </div /* end row */ >
         </main>
         <footer>
-          (c) 1996-1999 Metigsoft Corp. All rights reseved.
+         (c) 1996-1999 Metigsoft Corp. All rights reseved.
         </footer>
-     </div>
+       </div>
     );
   }
 })
@@ -57,15 +64,14 @@ var MeteClient = React.createClass({
       <Provider store={store}>
           <Router history={history}>
             <Route path="/" component={MainLayout}>
-           </Route>
+              <IndexRoute component={StatsPage} />
+            </Route>
          </Router>
       </Provider>
     );
   }
 
 });
-
-              // <IndexRoute component={Baz} />
 
 var mountNode = document.getElementById('meteclient');
 ReactDOM.render(<MeteClient />, mountNode);

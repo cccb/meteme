@@ -1,4 +1,11 @@
-from rest_framework import serializers
+
+from rest_framework.serializers import Serializer, ModelSerializer, \
+                                       Field, ImageField, BooleanField, \
+                                       IntegerField, CharField, EmailField,\
+                                       DictField, PrimaryKeyRelatedField, \
+                                       DateTimeField, \
+                                       ValidationError
+
 from moneyed import Money
 
 from mete import models as mete_models
@@ -17,7 +24,8 @@ class AccountNotLocked:
         if account.is_locked:
             error = ("The action requires an non locked account. "
                      "The account is locked.")
-            raise serializers.ValidationError(error)
+            raise ValidationError(error)
+
 
 class UserAccountNotLocked:
     """
@@ -29,7 +37,7 @@ class UserAccountNotLocked:
         AccountNotLocked()(account)
 
 
-class MoneyField(serializers.Field):
+class MoneyField(Field):
     """
     Money objects are serialized into a string <Amount> <Currency>
     """
@@ -48,11 +56,11 @@ class MoneyField(serializers.Field):
         return Money(amount, currency)
 
 
-class AccountSerializer(serializers.ModelSerializer):
+class AccountSerializer(ModelSerializer):
     balance = MoneyField(default=Money('0.00', 'EUR'), read_only=True)
-    avatar = serializers.ImageField(read_only=True)
+    avatar = ImageField(read_only=True)
 
-    locked = serializers.BooleanField(read_only=True, source='is_locked')
+    locked = BooleanField(read_only=True, source='is_locked')
 
     class Meta:
         model = mete_models.Account
@@ -60,8 +68,8 @@ class AccountSerializer(serializers.ModelSerializer):
                   'updated_at']
 
 
-class UserSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField(required=False)
+class UserSerializer(ModelSerializer):
+    email = EmailField(required=False)
     account = AccountSerializer(many=False, required=False)
 
     def create(self, validated_data):
@@ -81,10 +89,10 @@ class UserSerializer(serializers.ModelSerializer):
                   'account']
 
 
-class ProductSerializer(serializers.ModelSerializer):
+class ProductSerializer(ModelSerializer):
 
     price = MoneyField(default=Money('0.00', 'EUR'))
-    prices = serializers.DictField(read_only=True)
+    prices = DictField(read_only=True)
 
     def get_prices(self, product):
         prices = [[str(p.price_set), str(p)] for p in product.price_set.all()]
@@ -96,11 +104,11 @@ class ProductSerializer(serializers.ModelSerializer):
                   'price']
 
 
-class PurchaseSerializer(serializers.Serializer):
+class PurchaseSerializer(Serializer):
     """
     (De-)Serialize Purchase
     """
-    product = serializers.PrimaryKeyRelatedField(
+    product = PrimaryKeyRelatedField(
         many=False,
         queryset=store_models.Product.objects.all())
 
@@ -137,7 +145,7 @@ class PurchaseSerializer(serializers.Serializer):
         }
 
 
-class DepositSerializer(serializers.Serializer):
+class DepositSerializer(Serializer):
     """
     Serialize a single money field as deposit.
     """
@@ -168,16 +176,16 @@ class DepositSerializer(serializers.Serializer):
         }
 
 
-class TransferSerializer(serializers.Serializer):
+class TransferSerializer(Serializer):
     """
     (De-)Serialize transfers
     """
-    from_user = serializers.PrimaryKeyRelatedField(
+    from_user = PrimaryKeyRelatedField(
         many=False,
         queryset=auth_models.User.objects.filter(is_active=True,
                                                  account__is_locked=False))
 
-    to_user = serializers.PrimaryKeyRelatedField(
+    to_user = PrimaryKeyRelatedField(
         many=False,
         queryset=auth_models.User.objects.filter(is_active=True,
                                                  account__is_locked=False))
@@ -217,3 +225,42 @@ class TransferSerializer(serializers.Serializer):
             "to_account": to_account,
             "amount": amount
         }
+
+
+
+#
+# == Stats Serializers
+#
+
+class StatsDonationsSerializer(Serializer):
+    """ Serialize Donation Amounts """
+    total = MoneyField()
+    current_month = MoneyField()
+
+
+class StatsTransactionsSerializer(Serializer):
+    """ Serialize Transactions Count """
+    total = IntegerField()
+    current_month = IntegerField()
+
+
+class StatsSerializer(Serializer):
+    """ Serialize stats """
+    money_gauge = MoneyField()
+    donations = StatsDonationsSerializer()
+    transactions = StatsTransactionsSerializer()
+    users = IntegerField()
+    backend_version = CharField()
+
+
+#
+# == Transactions
+#
+class TransactionSerializer(Serializer):
+    """ Serialize a single transaction """
+    id = IntegerField()
+    amount = MoneyField()
+    product_name = CharField()
+    product = ProductSerializer()
+    created_at = DateTimeField()
+

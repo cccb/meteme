@@ -1,12 +1,21 @@
+from datetime import datetime
+
 from django.conf.urls import url, include
 from django.contrib.auth import models as auth_models
 
-from rest_framework import routers, viewsets, status, views
-from rest_framework.response import Response
+from rest_framework import routers, status, views
 from rest_framework.decorators import detail_route
+from rest_framework.viewsets import ModelViewSet, GenericViewSet,\
+                                    ReadOnlyModelViewSet
 
-from mete import models as mete_models
-from store import models as store_models
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.response import Response
+
+from mete.models import Account, Transaction
+from store.models import Product
+
+
+from backend.settings import BACKEND_VERSION
 
 from moneyed import Money
 from api import serializers
@@ -14,7 +23,7 @@ from api import serializers
 from pprint import pprint
 
 
-class UserAccountViewSet(viewsets.ModelViewSet):
+class UserAccountViewSet(ModelViewSet):
     """
     Manage user accounts
     """
@@ -112,18 +121,18 @@ class UserAccountViewSet(viewsets.ModelViewSet):
         model = auth_models.User
 
 
-class ProductsViewSet(viewsets.ReadOnlyModelViewSet):
+class ProductsViewSet(ReadOnlyModelViewSet):
     """
     Get Products (readonly API)
     """
-    queryset = store_models.Product.objects.filter(active=True)
+    queryset = Product.objects.filter(active=True)
     serializer_class = serializers.ProductSerializer
 
     class Meta:
-        model = store_models.Product
+        model = Product
 
 
-class TransfersViewSet(viewsets.GenericViewSet):
+class TransfersViewSet(GenericViewSet):
     """
     Handle user to user transfers
     """
@@ -150,7 +159,68 @@ class TransfersViewSet(viewsets.GenericViewSet):
         })
 
 
+class StatsViewSet(GenericViewSet):
+    """
+    Handle stats:
+      show: transactions, cash position, amount of
+      donations. Overall and for the current month.
+
+    This view set is public and can be viewed without being logged in.
+    """
+    permission_classes = [AllowAny]
+
+    def list(self, request):
+        """ Show stats """
+        now = datetime.now()
+        current_month = (now.year, now.month)
+
+        user_count = auth_models.User.objects.filter(
+            is_active=True, account__is_disabled=False).count()
+
+        accounts = Account.objects.all()
+        accounts_sum = sum([a.balance for a in accounts])
+
+        transactions_count = Transaction.objects.all().count()
+        transactions_months = Transaction.objects.grouped_month()
+        transactions_current_count = len(transactions_months.get(current_month,
+                                                                 []))
+
+        donations = Transaction.objects.donations()
+        donations_total = sum(abs(d.amount) for d in donations)
+        donations_grouped = Transaction.objects.donations_grouped_months()
+        donations_current_sum = sum(
+            abs(d.amount) for d in donations_grouped.get(current_month, []))
+
+        stats = {
+            'money_gauge': accounts_sum,
+            'donations': {
+                'total': donations_total,
+                'current_month': donations_current_sum,
+            },
+            'transactions': {
+                'total': transactions_count,
+                'current_month': transactions_current_count,
+            },
+            'users': user_count,
+            'backend_version': BACKEND_VERSION,
+        }
+
+        serialized_stats = serializers.StatsSerializer(stats)
+        return Response(serialized_stats.data)
+
+
+
+class TransactionsLogViewSet(ReadOnlyModelViewSet):
+    """ Get list of all transactions """
+    permission_classes = [AllowAny]
+    queryset = Transaction.objects.all()
+
+    serializer_class = serializers.TransactionSerializer
+
+
 router = routers.DefaultRouter()
 router.register('users', UserAccountViewSet)
 router.register('products', ProductsViewSet)
 router.register('transfers', TransfersViewSet, base_name='transfers')
+router.register('stats', StatsViewSet, base_name='stats')
+router.register('transactions', TransactionsLogViewSet, base_name='transactions')

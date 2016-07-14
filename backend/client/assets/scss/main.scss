@@ -1,40 +1,57 @@
 
 
-@import '../../bower_components/bootstrap/dist/css/bootstrap';
-@import 'theme/bootstrap-theme';
+// Boostrap and other requirements
+@import 'theme/bootstrap-darkly';
 
 @import 'fonts/comfortaa';
+
+// Helper
+@import 'helper/clearfix';
+
+// Components
+@import 'components/card';
+@import 'components/stats-list';
 
 
 html, body {
   background: url('../images/zwartevilt.png') 0px 0px repeat;
+  height: 100%;
+  position: relative;
 }
 
-.navbar-brand {
+.container-main {
+  margin: 40px 100px;
+}
+
+.logo {
+  float: left;
+  font-size: 20px;
   font-family: comfortaa;
   position: relative;
+  padding-right: 15px;
 
   .trade {
     position: absolute;
     right: 0px;
     font-size: 8px;
-    top: 5px;
+    top: 0px;
   }
 }
 
 footer {
-  position: absolute;
+  position: fixed;
   bottom: 0px;
-  background: #000000;
+  background: #222222;
   color: #888;
   width: 100%;
   text-align: center;
-  padding: 0px;
+  padding: 4px;
   font-size: 10px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+  border-top: 1px solid #464545;
 }
 
 main {
-  margin-top: 50px + 30px;
 }
 
 .navbar-main {

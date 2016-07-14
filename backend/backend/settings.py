@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 import os
+
+from string import strip
 from ConfigParser import ConfigParser
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -162,3 +164,11 @@ STATICFILES_FINDERS = (
 
 MEDIA_ROOT = config.get('media', 'root')
 MEDIA_URL = config.get('media', 'url')
+
+# Backend version
+try:
+    with open(os.path.join(BASE_DIR, '../VERSION'), 'r') as version_file:
+        BACKEND_VERSION = strip(version_file.read())
+except IOError:
+    BACKEND_VERSION = 'unknown'
+
