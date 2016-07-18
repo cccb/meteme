@@ -13,6 +13,9 @@ from rest_framework.decorators import detail_route
 from rest_framework.viewsets import ModelViewSet, GenericViewSet,\
                                     ReadOnlyModelViewSet
 
+from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.serializers import ValidationError
+
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 
@@ -56,9 +59,15 @@ class SessionViewSet(GenericViewSet):
     def create(self, request):
         """ Create a session with credentials """
         serializer = AuthenticationSerializer(data=request.data)
-        if serializer.is_valid():
-            # Credentials are valid, let's login the user
-            login(request, serializer.validated_data['user'])
+
+        if not serializer.is_valid():
+            if 'non_field_errors' in serializer.errors:
+                raise AuthenticationFailed('Invalid credentials')
+
+            raise ValidationError(serializer.errors)
+
+        # Credentials are valid, let's login the user
+        login(request, serializer.validated_data['user'])
 
         serialized_session = SessionSerializer(self.session)
         return Response(serialized_session.data)
