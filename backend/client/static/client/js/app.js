@@ -74,28 +74,42 @@
 
 	var _reducers2 = _interopRequireDefault(_reducers);
 
-	var _statsPage = __webpack_require__(283);
+	var _statsPage = __webpack_require__(284);
 
 	var _statsPage2 = _interopRequireDefault(_statsPage);
+
+	var _auth = __webpack_require__(259);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	// Setup logger
 
+
+	// Components
+	var loggerMiddleware = (0, _reduxLogger2.default)();
+
+	// Actions
+
 	/**
 	 * Mete98 ME Client Application
 	 */
 
-	var loggerMiddleware = (0, _reduxLogger2.default)();
+	var routerMiddleware = (0, _reactRouterRedux.routerMiddleware)(_reactRouter.hashHistory);
 
 	// Setup client
-	var store = (0, _redux.createStore)(_reducers2.default, (0, _redux.applyMiddleware)(_reduxThunk2.default //, loggerMiddleware
-	));
+	var store = (0, _redux.createStore)(_reducers2.default, (0, _redux.applyMiddleware)(routerMiddleware, _reduxThunk2.default, loggerMiddleware));
 
 	var history = (0, _reactRouterRedux.syncHistoryWithStore)(_reactRouter.hashHistory, store);
 
 	var MainLayout = _react2.default.createClass({
 	  displayName: 'MainLayout',
+	  componentDidMount: function componentDidMount() {
+	    var dispatch = this.props.dispatch;
+
+
+	    dispatch((0, _auth.syncSession)());
+	  },
+
 
 	  render: function render() {
 	    return _react2.default.createElement(
@@ -104,17 +118,7 @@
 	      _react2.default.createElement(
 	        'main',
 	        { className: 'container-main' },
-	        this.props.children,
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'row' },
-	          _react2.default.createElement('div', { className: 'col-md-5' }),
-	          _react2.default.createElement(
-	            'div',
-	            { className: 'col-md-5 col-md-offset-1' },
-	            this.props.aside
-	          )
-	        )
+	        this.props.children
 	      ),
 	      _react2.default.createElement(
 	        'footer',
@@ -124,6 +128,10 @@
 	    );
 	  }
 	});
+
+	var MainLayoutContainer = (0, _reactRedux.connect)(function (state) {
+	  return {};
+	})(MainLayout);
 
 	/**
 	 * Mete Client 
@@ -139,8 +147,9 @@
 	        { history: history },
 	        _react2.default.createElement(
 	          _reactRouter.Route,
-	          { path: '/', component: MainLayout },
-	          _react2.default.createElement(_reactRouter.IndexRoute, { component: _statsPage2.default })
+	          { path: '/', component: MainLayoutContainer },
+	          _react2.default.createElement(_reactRouter.IndexRoute, { component: _statsPage2.default }),
+	          _react2.default.createElement(_reactRouter.Route, { component: _statsPage2.default, path: 'stats' })
 	        )
 	      )
 	    );
@@ -28096,11 +28105,11 @@
 
 	var _auth2 = _interopRequireDefault(_auth);
 
-	var _stats = __webpack_require__(259);
+	var _stats = __webpack_require__(280);
 
 	var _stats2 = _interopRequireDefault(_stats);
 
-	var _transactions = __webpack_require__(281);
+	var _transactions = __webpack_require__(282);
 
 	var _transactions2 = _interopRequireDefault(_transactions);
 
@@ -28116,7 +28125,7 @@
 
 /***/ },
 /* 258 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -28124,8 +28133,14 @@
 	  value: true
 	});
 
+	var _auth = __webpack_require__(259);
+
+	var _api = __webpack_require__(279);
+
 	// Auth reducer
 	var initialAuthState = {
+	  isSynced: false,
+	  isSyncing: false,
 	  isAuthenticated: false,
 	  isAuthenticating: false,
 	  user: {
@@ -28140,23 +28155,34 @@
 
 
 	  switch (action.type) {
-	    case 'AUTHENTICATION_REQUEST':
+	    case _auth.AUTHENTICATION_REQUEST:
 	      return Object.assign({}, state, {
 	        isAuthenticating: true
 	      });
 
-	    case 'AUTHENTICATION_SUCCESS':
+	    case _auth.AUTHENTICATION_SUCCESS:
 	      return Object.assign({}, state, {
 	        isAuthenticating: false,
 	        isAuthenticated: true,
 	        user: action.user
 	      });
 
-	    case 'AUTHENTICATION_ERROR':
+	    case _auth.AUTHENTICATION_ERROR:
 	      return Object.assign({}, state, {
 	        isAuthenticating: false,
 	        isAuthenticated: false,
 	        error: action.error
+	      });
+
+	    case _auth.SESSION_SYNC_REQUEST:
+	      return Object.assign({}, state, {
+	        isSyncing: true
+	      });
+
+	    case _api.API_ERROR:
+	      return Object.assign({}, state, {
+	        isAuthenticating: false,
+	        isSyncing: false
 	      });
 	  }
 	  return state;
@@ -28174,128 +28200,126 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.default = statsReducer;
+	exports.SESSION_SYNC_SUCCESS = exports.SESSION_SYNC_REQUEST = exports.AUTHENTICATION_ERROR = exports.AUTHENTICATION_SUCCESS = exports.AUTHENTICATION_REQUEST = undefined;
+	exports.authenticationRequest = authenticationRequest;
+	exports.authenticationSuccess = authenticationSuccess;
+	exports.authenticationError = authenticationError;
+	exports.authenticate = authenticate;
+	exports.sessionSyncRequest = sessionSyncRequest;
+	exports.sessionSyncSuccess = sessionSyncSuccess;
+	exports.syncSession = syncSession;
 
-	var _stats = __webpack_require__(260);
+	var _axios = __webpack_require__(260);
 
-	var _api = __webpack_require__(280);
+	var _axios2 = _interopRequireDefault(_axios);
 
-	// Default state:
-	var initialState = {
-	  isFetching: false
-	};
+	var _api = __webpack_require__(279);
 
-	// Create Stats Reducer
-	function statsReducer() {
-	  var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
-	  var action = arguments[1];
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	  switch (action.type) {
-	    case _stats.REQUEST_STATS:
-	      return Object.assign({}, state, {
-	        isFetching: true
-	      });
+	var AUTHENTICATION_REQUEST = exports.AUTHENTICATION_REQUEST = 'AUTHENTICATION_REQUEST';
+	var AUTHENTICATION_SUCCESS = exports.AUTHENTICATION_SUCCESS = 'AUTHENTICATION_SUCCESS';
+	var AUTHENTICATION_ERROR = exports.AUTHENTICATION_ERROR = 'AUTHENTICATION_ERROR';
 
-	    case _stats.RECEIVE_STATS:
-	      // Update stats state
-	      var stats = action.stats;
-	      return Object.assign({}, state, {
-	        donationsCurrentMonth: stats.donations.current_month,
-	        donationsTotal: stats.donations.total,
+	var SESSION_SYNC_REQUEST = exports.SESSION_SYNC_REQUEST = 'SESSION_SYNC_REQUEST';
+	var SESSION_SYNC_SUCCESS = exports.SESSION_SYNC_SUCCESS = 'SESSION_SYNC_SUCCESS';
 
-	        transactionsCurrentMonth: stats.transactions.current_month,
-	        transactionsTotal: stats.transactions.total,
+	/**
+	 * Request authentication
+	 */
+	function authenticationRequest() {
+	  return {
+	    type: AUTHENTICATION_REQUEST
+	  };
+	}
 
-	        moneyGauge: stats.money_gauge,
+	/**
+	 * Authentication success
+	 */
+	function authenticationSuccess(session) {
+	  return {
+	    type: AUTHENTICATION_SUCCESS,
+	    session: session
+	  };
+	}
 
-	        users: stats.users,
-	        backendVersion: stats.backend_version,
+	/**
+	 * Authentication error
+	 */
+	function authenticationError(error) {
+	  return {
+	    type: AUTHENTICATION_ERROR,
+	    error: error
+	  };
+	}
 
-	        isFetching: false
-	      });
+	/**
+	 * Authenticate
+	 */
+	function authenticate(credentials) {
+	  return function (dispatch) {
+	    dispatch(authenticationRequest());
+	    axio.post('/api/session/', credentials).then(function (result) {
+	      dispatch(authenticationSuccess(result.data));
+	    }).catch(function (error) {
+	      dispatch(authenticationError(error.data));
+	    });
+	  };
+	}
 
-	    case _api.API_ERROR:
-	      return Object.assign({}, state, {
-	        isFetching: false
-	      });
-	  }
-	  return state;
+	/**
+	 * Sync with session
+	 */
+	function sessionSyncRequest() {
+	  return {
+	    type: SESSION_SYNC_REQUEST
+	  };
+	}
+
+	/**
+	 * Sync finished
+	 */
+	function sessionSyncSuccess() {
+	  return {
+	    type: SESSION_SYNC_SUCCESS
+	  };
+	}
+
+	/**
+	 * Sync with session
+	 */
+	function syncSession() {
+	  return function (dispatch) {
+	    dispatch(sessionSyncRequest());
+	    _axios2.default.get('/api/session/').then(function (result) {
+	      dispatch(sessionSyncSuccess());
+	      dispatch(authenticationSuccess(result.data));
+	    }).catch(function (result) {
+	      dispatch((0, _api.apiError)(error.data));
+	    });
+	  };
 	}
 
 /***/ },
 /* 260 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.RECEIVE_STATS = exports.REQUEST_STATS = undefined;
-	exports.requestStats = requestStats;
-	exports.receiveStats = receiveStats;
-	exports.fetchStats = fetchStats;
-
-	var _axios = __webpack_require__(261);
-
-	var _axios2 = _interopRequireDefault(_axios);
-
-	var _api = __webpack_require__(280);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var REQUEST_STATS = exports.REQUEST_STATS = 'FETCH_STATS';
-	var RECEIVE_STATS = exports.RECEIVE_STATS = 'RECEIVE_STATS';
-
-	/*
-	 * Actions
-	 */
-
-	function requestStats() {
-	  return {
-	    type: REQUEST_STATS
-	  };
-	}
-
-	function receiveStats(stats) {
-	  return {
-	    type: RECEIVE_STATS,
-	    stats: stats
-	  };
-	}
-
-	function fetchStats() {
-	  return function (dispatch) {
-	    dispatch(requestStats()); // Send Event
-
-	    _axios2.default.get('/api/stats/').then(function (res) {
-	      dispatch(receiveStats(res.data));
-	    }).catch(function (error) {
-	      (0, _api.apiError)(error);
-	    });
-	  };
-	}
+	module.exports = __webpack_require__(261);
 
 /***/ },
 /* 261 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(262);
-
-/***/ },
-/* 262 */
-/***/ function(module, exports, __webpack_require__) {
-
 	'use strict';
 
-	var defaults = __webpack_require__(263);
-	var utils = __webpack_require__(264);
-	var dispatchRequest = __webpack_require__(266);
-	var InterceptorManager = __webpack_require__(275);
-	var isAbsoluteURL = __webpack_require__(276);
-	var combineURLs = __webpack_require__(277);
-	var bind = __webpack_require__(278);
-	var transformData = __webpack_require__(270);
+	var defaults = __webpack_require__(262);
+	var utils = __webpack_require__(263);
+	var dispatchRequest = __webpack_require__(265);
+	var InterceptorManager = __webpack_require__(274);
+	var isAbsoluteURL = __webpack_require__(275);
+	var combineURLs = __webpack_require__(276);
+	var bind = __webpack_require__(277);
+	var transformData = __webpack_require__(269);
 
 	function Axios(defaultConfig) {
 	  this.defaults = utils.merge({}, defaultConfig);
@@ -28384,7 +28408,7 @@
 	axios.all = function all(promises) {
 	  return Promise.all(promises);
 	};
-	axios.spread = __webpack_require__(279);
+	axios.spread = __webpack_require__(278);
 
 	// Provide aliases for supported request methods
 	utils.forEach(['delete', 'get', 'head'], function forEachMethodNoData(method) {
@@ -28412,13 +28436,13 @@
 
 
 /***/ },
-/* 263 */
+/* 262 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var utils = __webpack_require__(264);
-	var normalizeHeaderName = __webpack_require__(265);
+	var utils = __webpack_require__(263);
+	var normalizeHeaderName = __webpack_require__(264);
 
 	var PROTECTION_PREFIX = /^\)\]\}',?\n/;
 	var DEFAULT_CONTENT_TYPE = {
@@ -28490,7 +28514,7 @@
 
 
 /***/ },
-/* 264 */
+/* 263 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -28773,12 +28797,12 @@
 
 
 /***/ },
-/* 265 */
+/* 264 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var utils = __webpack_require__(264);
+	var utils = __webpack_require__(263);
 
 	module.exports = function normalizeHeaderName(headers, normalizedName) {
 	  utils.forEach(headers, function processHeader(value, name) {
@@ -28791,7 +28815,7 @@
 
 
 /***/ },
-/* 266 */
+/* 265 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -28813,10 +28837,10 @@
 	        adapter = config.adapter;
 	      } else if (typeof XMLHttpRequest !== 'undefined') {
 	        // For browsers use XHR adapter
-	        adapter = __webpack_require__(267);
+	        adapter = __webpack_require__(266);
 	      } else if (typeof process !== 'undefined') {
 	        // For node use HTTP adapter
-	        adapter = __webpack_require__(267);
+	        adapter = __webpack_require__(266);
 	      }
 
 	      if (typeof adapter === 'function') {
@@ -28832,18 +28856,18 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 267 */
+/* 266 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
 
-	var utils = __webpack_require__(264);
-	var buildURL = __webpack_require__(268);
-	var parseHeaders = __webpack_require__(269);
-	var transformData = __webpack_require__(270);
-	var isURLSameOrigin = __webpack_require__(271);
-	var btoa = (typeof window !== 'undefined' && window.btoa) || __webpack_require__(272);
-	var settle = __webpack_require__(273);
+	var utils = __webpack_require__(263);
+	var buildURL = __webpack_require__(267);
+	var parseHeaders = __webpack_require__(268);
+	var transformData = __webpack_require__(269);
+	var isURLSameOrigin = __webpack_require__(270);
+	var btoa = (typeof window !== 'undefined' && window.btoa) || __webpack_require__(271);
+	var settle = __webpack_require__(272);
 
 	module.exports = function xhrAdapter(resolve, reject, config) {
 	  var requestData = config.data;
@@ -28940,7 +28964,7 @@
 	  // This is only done if running in a standard browser environment.
 	  // Specifically not if we're in a web worker, or react-native.
 	  if (utils.isStandardBrowserEnv()) {
-	    var cookies = __webpack_require__(274);
+	    var cookies = __webpack_require__(273);
 
 	    // Add xsrf header
 	    var xsrfValue = config.withCredentials || isURLSameOrigin(config.url) ?
@@ -29001,12 +29025,12 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 268 */
+/* 267 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var utils = __webpack_require__(264);
+	var utils = __webpack_require__(263);
 
 	function encode(val) {
 	  return encodeURIComponent(val).
@@ -29075,12 +29099,12 @@
 
 
 /***/ },
-/* 269 */
+/* 268 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var utils = __webpack_require__(264);
+	var utils = __webpack_require__(263);
 
 	/**
 	 * Parse headers into an object
@@ -29118,12 +29142,12 @@
 
 
 /***/ },
-/* 270 */
+/* 269 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var utils = __webpack_require__(264);
+	var utils = __webpack_require__(263);
 
 	/**
 	 * Transform the data for a request or a response
@@ -29144,12 +29168,12 @@
 
 
 /***/ },
-/* 271 */
+/* 270 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var utils = __webpack_require__(264);
+	var utils = __webpack_require__(263);
 
 	module.exports = (
 	  utils.isStandardBrowserEnv() ?
@@ -29218,7 +29242,7 @@
 
 
 /***/ },
-/* 272 */
+/* 271 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -29260,7 +29284,7 @@
 
 
 /***/ },
-/* 273 */
+/* 272 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -29284,12 +29308,12 @@
 
 
 /***/ },
-/* 274 */
+/* 273 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var utils = __webpack_require__(264);
+	var utils = __webpack_require__(263);
 
 	module.exports = (
 	  utils.isStandardBrowserEnv() ?
@@ -29343,12 +29367,12 @@
 
 
 /***/ },
-/* 275 */
+/* 274 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var utils = __webpack_require__(264);
+	var utils = __webpack_require__(263);
 
 	function InterceptorManager() {
 	  this.handlers = [];
@@ -29401,7 +29425,7 @@
 
 
 /***/ },
-/* 276 */
+/* 275 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -29421,7 +29445,7 @@
 
 
 /***/ },
-/* 277 */
+/* 276 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -29439,7 +29463,7 @@
 
 
 /***/ },
-/* 278 */
+/* 277 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -29456,7 +29480,7 @@
 
 
 /***/ },
-/* 279 */
+/* 278 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -29489,7 +29513,7 @@
 
 
 /***/ },
-/* 280 */
+/* 279 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -29507,7 +29531,118 @@
 	}
 
 /***/ },
+/* 280 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = statsReducer;
+
+	var _stats = __webpack_require__(281);
+
+	var _api = __webpack_require__(279);
+
+	// Default state:
+	var initialState = {
+	  isFetching: false
+	};
+
+	// Create Stats Reducer
+	function statsReducer() {
+	  var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
+	  var action = arguments[1];
+
+	  switch (action.type) {
+	    case _stats.REQUEST_STATS:
+	      return Object.assign({}, state, {
+	        isFetching: true
+	      });
+
+	    case _stats.RECEIVE_STATS:
+	      // Update stats state
+	      var stats = action.stats;
+	      return Object.assign({}, state, {
+	        donationsCurrentMonth: stats.donations.current_month,
+	        donationsTotal: stats.donations.total,
+
+	        transactionsCurrentMonth: stats.transactions.current_month,
+	        transactionsTotal: stats.transactions.total,
+
+	        moneyGauge: stats.money_gauge,
+
+	        users: stats.users,
+	        backendVersion: stats.backend_version,
+
+	        isFetching: false
+	      });
+
+	    case _api.API_ERROR:
+	      return Object.assign({}, state, {
+	        isFetching: false
+	      });
+	  }
+	  return state;
+	}
+
+/***/ },
 /* 281 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.RECEIVE_STATS = exports.REQUEST_STATS = undefined;
+	exports.requestStats = requestStats;
+	exports.receiveStats = receiveStats;
+	exports.fetchStats = fetchStats;
+
+	var _axios = __webpack_require__(260);
+
+	var _axios2 = _interopRequireDefault(_axios);
+
+	var _api = __webpack_require__(279);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var REQUEST_STATS = exports.REQUEST_STATS = 'FETCH_STATS';
+	var RECEIVE_STATS = exports.RECEIVE_STATS = 'RECEIVE_STATS';
+
+	/*
+	 * Actions
+	 */
+
+	function requestStats() {
+	  return {
+	    type: REQUEST_STATS
+	  };
+	}
+
+	function receiveStats(stats) {
+	  return {
+	    type: RECEIVE_STATS,
+	    stats: stats
+	  };
+	}
+
+	function fetchStats() {
+	  return function (dispatch) {
+	    dispatch(requestStats()); // Send Event
+
+	    _axios2.default.get('/api/stats/').then(function (res) {
+	      dispatch(receiveStats(res.data));
+	    }).catch(function (error) {
+	      (0, _api.apiError)(error);
+	    });
+	  };
+	}
+
+/***/ },
+/* 282 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29517,9 +29652,9 @@
 	});
 	exports.default = transactionsReducer;
 
-	var _transactions = __webpack_require__(282);
+	var _transactions = __webpack_require__(283);
 
-	var _api = __webpack_require__(280);
+	var _api = __webpack_require__(279);
 
 	// == Helpers
 
@@ -29593,7 +29728,7 @@
 	}
 
 /***/ },
-/* 282 */
+/* 283 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29606,11 +29741,11 @@
 	exports.receiveTransactions = receiveTransactions;
 	exports.fetchTransactions = fetchTransactions;
 
-	var _axios = __webpack_require__(261);
+	var _axios = __webpack_require__(260);
 
 	var _axios2 = _interopRequireDefault(_axios);
 
-	var _api = __webpack_require__(280);
+	var _api = __webpack_require__(279);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -29655,7 +29790,7 @@
 	}
 
 /***/ },
-/* 283 */
+/* 284 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29668,23 +29803,23 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _nav = __webpack_require__(284);
+	var _nav = __webpack_require__(285);
 
 	var _nav2 = _interopRequireDefault(_nav);
 
-	var _card = __webpack_require__(285);
+	var _card = __webpack_require__(286);
 
 	var _card2 = _interopRequireDefault(_card);
 
-	var _stats = __webpack_require__(286);
+	var _stats = __webpack_require__(287);
 
 	var _stats2 = _interopRequireDefault(_stats);
 
-	var _transactionLog = __webpack_require__(288);
+	var _transactionLog = __webpack_require__(289);
 
 	var _transactionLog2 = _interopRequireDefault(_transactionLog);
 
-	var _graph = __webpack_require__(289);
+	var _graph = __webpack_require__(290);
 
 	var _graph2 = _interopRequireDefault(_graph);
 
@@ -29713,7 +29848,7 @@
 	});
 
 /***/ },
-/* 284 */
+/* 285 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29726,7 +29861,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _card = __webpack_require__(285);
+	var _card = __webpack_require__(286);
 
 	var _card2 = _interopRequireDefault(_card);
 
@@ -29819,7 +29954,7 @@
 	});
 
 /***/ },
-/* 285 */
+/* 286 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -29872,7 +30007,7 @@
 	     */
 
 /***/ },
-/* 286 */
+/* 287 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29887,15 +30022,15 @@
 
 	var _reactRedux = __webpack_require__(181);
 
-	var _card = __webpack_require__(285);
+	var _card = __webpack_require__(286);
 
 	var _card2 = _interopRequireDefault(_card);
 
-	var _datefmt = __webpack_require__(287);
+	var _datefmt = __webpack_require__(288);
 
 	var _datefmt2 = _interopRequireDefault(_datefmt);
 
-	var _stats = __webpack_require__(260);
+	var _stats = __webpack_require__(281);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -30072,7 +30207,7 @@
 	})(StatsView);
 
 /***/ },
-/* 287 */
+/* 288 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30108,7 +30243,7 @@
 	});
 
 /***/ },
-/* 288 */
+/* 289 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30123,9 +30258,9 @@
 
 	var _reactRedux = __webpack_require__(181);
 
-	var _transactions = __webpack_require__(282);
+	var _transactions = __webpack_require__(283);
 
-	var _card = __webpack_require__(285);
+	var _card = __webpack_require__(286);
 
 	var _card2 = _interopRequireDefault(_card);
 
@@ -30283,7 +30418,7 @@
 	})(TransactionsLog);
 
 /***/ },
-/* 289 */
+/* 290 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30298,11 +30433,11 @@
 
 	var _reactRedux = __webpack_require__(181);
 
-	var _card = __webpack_require__(285);
+	var _card = __webpack_require__(286);
 
 	var _card2 = _interopRequireDefault(_card);
 
-	var _reactHighcharts = __webpack_require__(290);
+	var _reactHighcharts = __webpack_require__(291);
 
 	var _reactHighcharts2 = _interopRequireDefault(_reactHighcharts);
 
@@ -30398,13 +30533,13 @@
 	})(GraphView);
 
 /***/ },
-/* 290 */
+/* 291 */
 /***/ function(module, exports, __webpack_require__) {
 
-	!function(r,t){ true?module.exports=t(__webpack_require__(1),__webpack_require__(291)):"function"==typeof define&&define.amd?define(["react","highcharts"],t):"object"==typeof exports?exports.ReactHighcharts=t(require("react"),require("highcharts")):r.ReactHighcharts=t(r.React,r.Highcharts)}(this,function(r,t){return function(r){function t(o){if(e[o])return e[o].exports;var n=e[o]={exports:{},id:o,loaded:!1};return r[o].call(n.exports,n,n.exports,t),n.loaded=!0,n.exports}var e={};return t.m=r,t.c=e,t.p="",t(0)}([function(r,t,e){r.exports=e(3)},function(t,e){t.exports=r},function(r,t,e){(function(t){"use strict";function o(r,t){var e={};for(var o in r)t.indexOf(o)>=0||Object.prototype.hasOwnProperty.call(r,o)&&(e[o]=r[o]);return e}var n=Object.assign||function(r){for(var t=1;t<arguments.length;t++){var e=arguments[t];for(var o in e)Object.prototype.hasOwnProperty.call(e,o)&&(r[o]=e[o])}return r},i=e(1),c="undefined"==typeof t?window:t;r.exports=function(t,e){var a="Highcharts"+t,s=i.createClass({displayName:a,propTypes:{config:i.PropTypes.object.isRequired,isPureConfig:i.PropTypes.bool,neverReflow:i.PropTypes.bool,callback:i.PropTypes.func},defaultProps:{callback:function(){}},renderChart:function(r){var o=this;if(!r)throw new Error("Config must be specified for the "+a+" component");var i=r.chart;this.chart=new e[t](n({},r,{chart:n({},i,{renderTo:this.refs.chart})}),this.props.callback),this.props.neverReflow||c.requestAnimationFrame&&requestAnimationFrame(function(){o.chart&&o.chart.options&&o.chart.reflow()})},shouldComponentUpdate:function(r){return r.neverReflow||r.isPureConfig&&this.props.config===r.config?!0:(this.renderChart(r.config),!1)},getChart:function(){if(!this.chart)throw new Error("getChart() should not be called before the component is mounted");return this.chart},componentDidMount:function(){this.renderChart(this.props.config)},componentWillUnmount:function(){this.chart.destroy()},render:function(){var r=this.props,t=(r.callback,r.config,r.isPureConfig,r.neverReflow,o(r,["callback","config","isPureConfig","neverReflow"]));return t=n({},t,{ref:"chart"}),i.createElement("div",t)}});return s.Highcharts=e,s.withHighcharts=function(e){return r.exports(t,e)},s}}).call(t,function(){return this}())},function(r,t,e){"use strict";r.exports=e(2)("Chart",e(4))},function(r,e){r.exports=t}])});
+	!function(r,t){ true?module.exports=t(__webpack_require__(1),__webpack_require__(292)):"function"==typeof define&&define.amd?define(["react","highcharts"],t):"object"==typeof exports?exports.ReactHighcharts=t(require("react"),require("highcharts")):r.ReactHighcharts=t(r.React,r.Highcharts)}(this,function(r,t){return function(r){function t(o){if(e[o])return e[o].exports;var n=e[o]={exports:{},id:o,loaded:!1};return r[o].call(n.exports,n,n.exports,t),n.loaded=!0,n.exports}var e={};return t.m=r,t.c=e,t.p="",t(0)}([function(r,t,e){r.exports=e(3)},function(t,e){t.exports=r},function(r,t,e){(function(t){"use strict";function o(r,t){var e={};for(var o in r)t.indexOf(o)>=0||Object.prototype.hasOwnProperty.call(r,o)&&(e[o]=r[o]);return e}var n=Object.assign||function(r){for(var t=1;t<arguments.length;t++){var e=arguments[t];for(var o in e)Object.prototype.hasOwnProperty.call(e,o)&&(r[o]=e[o])}return r},i=e(1),c="undefined"==typeof t?window:t;r.exports=function(t,e){var a="Highcharts"+t,s=i.createClass({displayName:a,propTypes:{config:i.PropTypes.object.isRequired,isPureConfig:i.PropTypes.bool,neverReflow:i.PropTypes.bool,callback:i.PropTypes.func},defaultProps:{callback:function(){}},renderChart:function(r){var o=this;if(!r)throw new Error("Config must be specified for the "+a+" component");var i=r.chart;this.chart=new e[t](n({},r,{chart:n({},i,{renderTo:this.refs.chart})}),this.props.callback),this.props.neverReflow||c.requestAnimationFrame&&requestAnimationFrame(function(){o.chart&&o.chart.options&&o.chart.reflow()})},shouldComponentUpdate:function(r){return r.neverReflow||r.isPureConfig&&this.props.config===r.config?!0:(this.renderChart(r.config),!1)},getChart:function(){if(!this.chart)throw new Error("getChart() should not be called before the component is mounted");return this.chart},componentDidMount:function(){this.renderChart(this.props.config)},componentWillUnmount:function(){this.chart.destroy()},render:function(){var r=this.props,t=(r.callback,r.config,r.isPureConfig,r.neverReflow,o(r,["callback","config","isPureConfig","neverReflow"]));return t=n({},t,{ref:"chart"}),i.createElement("div",t)}});return s.Highcharts=e,s.withHighcharts=function(e){return r.exports(t,e)},s}}).call(t,function(){return this}())},function(r,t,e){"use strict";r.exports=e(2)("Chart",e(4))},function(r,e){r.exports=t}])});
 
 /***/ },
-/* 291 */
+/* 292 */
 /***/ function(module, exports) {
 
 	/*
