@@ -2,6 +2,12 @@
 import React from 'react'
 import Card from './card'
 
+import activeComponent from 'react-router-active-component'
+
+
+// Create Nav Link
+let NavLink = activeComponent('li')
+
 export default React.createClass({
   render() {
     return(
@@ -24,13 +30,13 @@ export default React.createClass({
 
           <div className="collapse navbar-collapse">
             <ul className="nav navbar-nav">
-              <li className="active">
-                <a href="#">Stats</a>
-              </li>
-              <li className="disabled"><a href="#">My Account</a></li>
+              <NavLink to="/stats">Stats</NavLink>
+              <NavLink to="/account" className="disabled">
+                My Account
+              </NavLink>
             </ul>
             <ul className="nav navbar-nav navbar-right">
-              <li><a href="#">Login</a></li>
+              <NavLink to="/login">Login</NavLink>
             </ul>
           </div>
         </div>

@@ -78,21 +78,26 @@
 
 	var _statsPage2 = _interopRequireDefault(_statsPage);
 
+	var _loginPage = __webpack_require__(294);
+
+	var _loginPage2 = _interopRequireDefault(_loginPage);
+
 	var _auth = __webpack_require__(259);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	// Setup logger
 
+	/**
+	 * Mete98 ME Client Application
+	 */
 
-	// Components
 	var loggerMiddleware = (0, _reduxLogger2.default)();
 
 	// Actions
 
-	/**
-	 * Mete98 ME Client Application
-	 */
+
+	// Components
 
 	var routerMiddleware = (0, _reactRouterRedux.routerMiddleware)(_reactRouter.hashHistory);
 
@@ -148,8 +153,9 @@
 	        _react2.default.createElement(
 	          _reactRouter.Route,
 	          { path: '/', component: MainLayoutContainer },
-	          _react2.default.createElement(_reactRouter.IndexRoute, { component: _statsPage2.default }),
-	          _react2.default.createElement(_reactRouter.Route, { component: _statsPage2.default, path: 'stats' })
+	          _react2.default.createElement(_reactRouter.IndexRedirect, { to: '/stats' }),
+	          _react2.default.createElement(_reactRouter.Route, { component: _statsPage2.default, path: 'stats' }),
+	          _react2.default.createElement(_reactRouter.Route, { component: _loginPage2.default, path: 'login' })
 	        )
 	      )
 	    );
@@ -29811,15 +29817,15 @@
 
 	var _card2 = _interopRequireDefault(_card);
 
-	var _stats = __webpack_require__(287);
+	var _stats = __webpack_require__(288);
 
 	var _stats2 = _interopRequireDefault(_stats);
 
-	var _transactionLog = __webpack_require__(289);
+	var _transactionLog = __webpack_require__(290);
 
 	var _transactionLog2 = _interopRequireDefault(_transactionLog);
 
-	var _graph = __webpack_require__(290);
+	var _graph = __webpack_require__(291);
 
 	var _graph2 = _interopRequireDefault(_graph);
 
@@ -29865,7 +29871,14 @@
 
 	var _card2 = _interopRequireDefault(_card);
 
+	var _reactRouterActiveComponent = __webpack_require__(287);
+
+	var _reactRouterActiveComponent2 = _interopRequireDefault(_reactRouterActiveComponent);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	// Create Nav Link
+	var NavLink = (0, _reactRouterActiveComponent2.default)('li');
 
 	exports.default = _react2.default.createClass({
 	  displayName: 'nav',
@@ -29916,35 +29929,23 @@
 	            'ul',
 	            { className: 'nav navbar-nav' },
 	            _react2.default.createElement(
-	              'li',
-	              { className: 'active' },
-	              _react2.default.createElement(
-	                'a',
-	                { href: '#' },
-	                'Stats'
-	              )
+	              NavLink,
+	              { to: '/stats' },
+	              'Stats'
 	            ),
 	            _react2.default.createElement(
-	              'li',
-	              { className: 'disabled' },
-	              _react2.default.createElement(
-	                'a',
-	                { href: '#' },
-	                'My Account'
-	              )
+	              NavLink,
+	              { to: '/account', className: 'disabled' },
+	              'My Account'
 	            )
 	          ),
 	          _react2.default.createElement(
 	            'ul',
 	            { className: 'nav navbar-nav navbar-right' },
 	            _react2.default.createElement(
-	              'li',
-	              null,
-	              _react2.default.createElement(
-	                'a',
-	                { href: '#' },
-	                'Login'
-	              )
+	              NavLink,
+	              { to: '/login' },
+	              'Login'
 	            )
 	          )
 	        )
@@ -30012,6 +30013,138 @@
 
 	'use strict';
 
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRouterLibLink = __webpack_require__(230);
+
+	var _reactRouterLibLink2 = _interopRequireDefault(_reactRouterLibLink);
+
+	var _reactRouterLibWithRouter = __webpack_require__(232);
+
+	var _reactRouterLibWithRouter2 = _interopRequireDefault(_reactRouterLibWithRouter);
+
+	var toString = Object.prototype.toString;
+
+	var typeOf = function typeOf(o) {
+	  return toString.call(o).slice(8, -1).toLowerCase();
+	};
+
+	function createLocationDescriptor(_ref) {
+	  var to = _ref.to;
+	  var query = _ref.query;
+	  var hash = _ref.hash;
+	  var state = _ref.state;
+
+	  if (typeOf(to) === 'string') {
+	    return { pathname: to, query: query, hash: hash, state: state };
+	  }
+	  return _extends({ query: query, hash: hash, state: state }, to);
+	}
+
+	module.exports = function activeComponent(Component, options) {
+	  if (!Component) {
+	    throw new Error('activeComponent() must be given a tag name or React component');
+	  }
+
+	  options = _extends({
+	    link: true,
+	    linkClassName: undefined
+	  }, options);
+
+	  var ActiveComponent = _react2['default'].createClass({
+	    displayName: 'ActiveComponent',
+
+	    propTypes: {
+	      activeClassName: _react.PropTypes.string.isRequired,
+	      router: _react.PropTypes.object.isRequired,
+	      to: _react.PropTypes.oneOfType([_react.PropTypes.string, _react.PropTypes.object]).isRequired,
+
+	      activeStyle: _react.PropTypes.object,
+	      className: _react.PropTypes.string,
+	      hash: _react.PropTypes.string,
+	      link: _react.PropTypes.bool,
+	      linkProps: _react.PropTypes.object,
+	      onlyActiveOnIndex: _react.PropTypes.bool,
+	      query: _react.PropTypes.object
+	    },
+
+	    getDefaultProps: function getDefaultProps() {
+	      return {
+	        activeClassName: 'active',
+	        link: options.link,
+	        onlyActiveOnIndex: false
+	      };
+	    },
+
+	    render: function render() {
+	      var _props = this.props;
+	      var link = _props.link;
+	      var linkProps = _props.linkProps;
+	      var to = _props.to;
+	      var query = _props.query;
+	      var hash = _props.hash;
+	      var state = _props.state;
+	      var onlyActiveOnIndex = _props.onlyActiveOnIndex;
+	      var activeClassName = _props.activeClassName;
+	      var activeStyle = _props.activeStyle;
+	      var router = _props.router;
+
+	      var props = _objectWithoutProperties(_props, ['link', 'linkProps', 'to', 'query', 'hash', 'state', 'onlyActiveOnIndex', 'activeClassName', 'activeStyle', 'router']);
+
+	      var location = createLocationDescriptor({ to: to, query: query, hash: hash, state: state });
+
+	      if (router) {
+	        var active = router.isActive(location, onlyActiveOnIndex);
+	        if (typeOf(Component) !== 'string') {
+	          props.active = active;
+	        }
+
+	        if (active) {
+	          if (activeClassName) {
+	            props.className = '' + (props.className || '') + (props.className ? ' ' : '') + activeClassName;
+	          }
+	          if (activeStyle) {
+	            props.style = _extends({}, props.style, { activeStyle: activeStyle });
+	          }
+	        }
+	      }
+
+	      if (!link) {
+	        return _react2['default'].createElement(
+	          Component,
+	          props,
+	          this.props.children
+	        );
+	      }
+	      return _react2['default'].createElement(
+	        Component,
+	        props,
+	        _react2['default'].createElement(
+	          _reactRouterLibLink2['default'],
+	          _extends({ className: options.linkClassName }, linkProps, { to: location }),
+	          this.props.children
+	        )
+	      );
+	    }
+	  });
+
+	  return (0, _reactRouterLibWithRouter2['default'])(ActiveComponent);
+	};
+
+/***/ },
+/* 288 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
@@ -30026,7 +30159,7 @@
 
 	var _card2 = _interopRequireDefault(_card);
 
-	var _datefmt = __webpack_require__(288);
+	var _datefmt = __webpack_require__(289);
 
 	var _datefmt2 = _interopRequireDefault(_datefmt);
 
@@ -30207,7 +30340,7 @@
 	})(StatsView);
 
 /***/ },
-/* 288 */
+/* 289 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30243,7 +30376,7 @@
 	});
 
 /***/ },
-/* 289 */
+/* 290 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30418,7 +30551,7 @@
 	})(TransactionsLog);
 
 /***/ },
-/* 290 */
+/* 291 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30437,7 +30570,7 @@
 
 	var _card2 = _interopRequireDefault(_card);
 
-	var _reactHighcharts = __webpack_require__(291);
+	var _reactHighcharts = __webpack_require__(292);
 
 	var _reactHighcharts2 = _interopRequireDefault(_reactHighcharts);
 
@@ -30533,13 +30666,13 @@
 	})(GraphView);
 
 /***/ },
-/* 291 */
+/* 292 */
 /***/ function(module, exports, __webpack_require__) {
 
-	!function(r,t){ true?module.exports=t(__webpack_require__(1),__webpack_require__(292)):"function"==typeof define&&define.amd?define(["react","highcharts"],t):"object"==typeof exports?exports.ReactHighcharts=t(require("react"),require("highcharts")):r.ReactHighcharts=t(r.React,r.Highcharts)}(this,function(r,t){return function(r){function t(o){if(e[o])return e[o].exports;var n=e[o]={exports:{},id:o,loaded:!1};return r[o].call(n.exports,n,n.exports,t),n.loaded=!0,n.exports}var e={};return t.m=r,t.c=e,t.p="",t(0)}([function(r,t,e){r.exports=e(3)},function(t,e){t.exports=r},function(r,t,e){(function(t){"use strict";function o(r,t){var e={};for(var o in r)t.indexOf(o)>=0||Object.prototype.hasOwnProperty.call(r,o)&&(e[o]=r[o]);return e}var n=Object.assign||function(r){for(var t=1;t<arguments.length;t++){var e=arguments[t];for(var o in e)Object.prototype.hasOwnProperty.call(e,o)&&(r[o]=e[o])}return r},i=e(1),c="undefined"==typeof t?window:t;r.exports=function(t,e){var a="Highcharts"+t,s=i.createClass({displayName:a,propTypes:{config:i.PropTypes.object.isRequired,isPureConfig:i.PropTypes.bool,neverReflow:i.PropTypes.bool,callback:i.PropTypes.func},defaultProps:{callback:function(){}},renderChart:function(r){var o=this;if(!r)throw new Error("Config must be specified for the "+a+" component");var i=r.chart;this.chart=new e[t](n({},r,{chart:n({},i,{renderTo:this.refs.chart})}),this.props.callback),this.props.neverReflow||c.requestAnimationFrame&&requestAnimationFrame(function(){o.chart&&o.chart.options&&o.chart.reflow()})},shouldComponentUpdate:function(r){return r.neverReflow||r.isPureConfig&&this.props.config===r.config?!0:(this.renderChart(r.config),!1)},getChart:function(){if(!this.chart)throw new Error("getChart() should not be called before the component is mounted");return this.chart},componentDidMount:function(){this.renderChart(this.props.config)},componentWillUnmount:function(){this.chart.destroy()},render:function(){var r=this.props,t=(r.callback,r.config,r.isPureConfig,r.neverReflow,o(r,["callback","config","isPureConfig","neverReflow"]));return t=n({},t,{ref:"chart"}),i.createElement("div",t)}});return s.Highcharts=e,s.withHighcharts=function(e){return r.exports(t,e)},s}}).call(t,function(){return this}())},function(r,t,e){"use strict";r.exports=e(2)("Chart",e(4))},function(r,e){r.exports=t}])});
+	!function(r,t){ true?module.exports=t(__webpack_require__(1),__webpack_require__(293)):"function"==typeof define&&define.amd?define(["react","highcharts"],t):"object"==typeof exports?exports.ReactHighcharts=t(require("react"),require("highcharts")):r.ReactHighcharts=t(r.React,r.Highcharts)}(this,function(r,t){return function(r){function t(o){if(e[o])return e[o].exports;var n=e[o]={exports:{},id:o,loaded:!1};return r[o].call(n.exports,n,n.exports,t),n.loaded=!0,n.exports}var e={};return t.m=r,t.c=e,t.p="",t(0)}([function(r,t,e){r.exports=e(3)},function(t,e){t.exports=r},function(r,t,e){(function(t){"use strict";function o(r,t){var e={};for(var o in r)t.indexOf(o)>=0||Object.prototype.hasOwnProperty.call(r,o)&&(e[o]=r[o]);return e}var n=Object.assign||function(r){for(var t=1;t<arguments.length;t++){var e=arguments[t];for(var o in e)Object.prototype.hasOwnProperty.call(e,o)&&(r[o]=e[o])}return r},i=e(1),c="undefined"==typeof t?window:t;r.exports=function(t,e){var a="Highcharts"+t,s=i.createClass({displayName:a,propTypes:{config:i.PropTypes.object.isRequired,isPureConfig:i.PropTypes.bool,neverReflow:i.PropTypes.bool,callback:i.PropTypes.func},defaultProps:{callback:function(){}},renderChart:function(r){var o=this;if(!r)throw new Error("Config must be specified for the "+a+" component");var i=r.chart;this.chart=new e[t](n({},r,{chart:n({},i,{renderTo:this.refs.chart})}),this.props.callback),this.props.neverReflow||c.requestAnimationFrame&&requestAnimationFrame(function(){o.chart&&o.chart.options&&o.chart.reflow()})},shouldComponentUpdate:function(r){return r.neverReflow||r.isPureConfig&&this.props.config===r.config?!0:(this.renderChart(r.config),!1)},getChart:function(){if(!this.chart)throw new Error("getChart() should not be called before the component is mounted");return this.chart},componentDidMount:function(){this.renderChart(this.props.config)},componentWillUnmount:function(){this.chart.destroy()},render:function(){var r=this.props,t=(r.callback,r.config,r.isPureConfig,r.neverReflow,o(r,["callback","config","isPureConfig","neverReflow"]));return t=n({},t,{ref:"chart"}),i.createElement("div",t)}});return s.Highcharts=e,s.withHighcharts=function(e){return r.exports(t,e)},s}}).call(t,function(){return this}())},function(r,t,e){"use strict";r.exports=e(2)("Chart",e(4))},function(r,e){r.exports=t}])});
 
 /***/ },
-/* 292 */
+/* 293 */
 /***/ function(module, exports) {
 
 	/*
@@ -30886,6 +31019,85 @@
 	a.visible)a.isDirty=!0});p(c.linkedSeries,function(b){b.setVisible(a,!1)});if(g)d.isDirtyBox=!0;b!==!1&&d.redraw();I(c,f)},show:function(){this.setVisible(!0)},hide:function(){this.setVisible(!1)},select:function(a){this.selected=a=a===y?!this.selected:a;if(this.checkbox)this.checkbox.checked=a;I(this,a?"select":"unselect")},drawTracker:ga.drawTrackerGraph});u(x,{Color:ma,Point:Ja,Tick:Va,Renderer:cb,SVGElement:O,SVGRenderer:Da,arrayMin:La,arrayMax:Ga,charts:T,correctFloat:ca,dateFormat:Qa,error:aa,
 	format:Ka,pathAnim:void 0,getOptions:function(){return U},hasBidiBug:Pb,isTouchDevice:Lb,setOptions:function(a){U=E(!0,U,a);Eb();return U},addEvent:N,removeEvent:X,createElement:ba,discardElement:Sa,css:M,each:p,map:Ca,merge:E,splat:ta,stableSort:hb,extendClass:qa,pInt:C,svg:fa,canvas:ka,vml:!fa&&!ka,product:"Highcharts",version:"4.2.5"});return x});
 
+
+/***/ },
+/* 294 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRedux = __webpack_require__(181);
+
+	var _nav = __webpack_require__(285);
+
+	var _nav2 = _interopRequireDefault(_nav);
+
+	var _card = __webpack_require__(286);
+
+	var _card2 = _interopRequireDefault(_card);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	/**
+	 * Authentication / Login Page
+	 */
+
+	// Components
+
+
+	// Login Page
+
+	var LoginPage = function (_Component) {
+	  _inherits(LoginPage, _Component);
+
+	  function LoginPage() {
+	    _classCallCheck(this, LoginPage);
+
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(LoginPage).apply(this, arguments));
+	  }
+
+	  _createClass(LoginPage, [{
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'row' },
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'col-md-5' },
+	          _react2.default.createElement(_nav2.default, null)
+	        ),
+	        _react2.default.createElement('div', { className: 'col-md-5' })
+	      );
+	    }
+	  }]);
+
+	  return LoginPage;
+	}(_react.Component);
+
+	// Container
+
+
+	exports.default = (0, _reactRedux.connect)(function (state) {
+	  return {};
+	}, function (dispatch) {
+	  return {};
+	})(LoginPage);
 
 /***/ }
 /******/ ]);

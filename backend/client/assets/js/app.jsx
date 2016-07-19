@@ -20,6 +20,7 @@ import createLogger from 'redux-logger'
 import { Router,
          Route,
          IndexRoute,
+         IndexRedirect,
          hashHistory,
          Link } from 'react-router'
 
@@ -33,6 +34,7 @@ import combinedReducer from './reducers'
 
 // Components
 import StatsPage from './components/stats-page'
+import LoginPage from './components/login-page'
 
 // Actions
 import { syncSession } from './actions/auth';
@@ -89,8 +91,9 @@ var MeteClient = React.createClass({
       <Provider store={store}>
           <Router history={history}>
             <Route path="/" component={MainLayoutContainer}>
-              <IndexRoute component={StatsPage} />
+              <IndexRedirect to='/stats' />
               <Route component={StatsPage} path="stats" />
+              <Route component={LoginPage} path="login" />
             </Route>
          </Router>
       </Provider>
