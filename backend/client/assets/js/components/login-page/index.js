@@ -11,6 +11,7 @@ import { connect }    from 'react-redux'
 import Nav  from '../nav'
 import Card from '../card'
 
+import LoginForm from './login-form'
 
 // Login Page
 class LoginPage extends Component {
@@ -20,6 +21,9 @@ class LoginPage extends Component {
         <div className="col-md-5">
           <Nav />
 
+          <Card header="Login">
+            <LoginForm onSubmit={this.props.authenticate} />
+          </Card>
 
         </div /* end col */>
         <div className="col-md-5">
@@ -38,6 +42,9 @@ export default connect(
   },
   (dispatch) => {
     return {
+      authenticate: (formData) => {
+        console.log(formData);
+      }
     };
   }
 )(LoginPage);

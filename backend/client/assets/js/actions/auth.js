@@ -85,8 +85,11 @@ export function syncSession() {
     dispatch(sessionSyncRequest());
     axios.get('/api/session/')
       .then((result) => {
+        let session = result.data;
+        if (session.is_authenticated) {
+          dispatch(authenticationSuccess(result.data));
+        }
         dispatch(sessionSyncSuccess());
-        dispatch(authenticationSuccess(result.data));
       })
       .catch((result) => {
         dispatch(apiError(error.data));

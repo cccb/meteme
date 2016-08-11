@@ -4,7 +4,6 @@ import Card from './card'
 
 import activeComponent from 'react-router-active-component'
 
-
 // Create Nav Link
 let NavLink = activeComponent('li')
 
