@@ -5,12 +5,21 @@ import mete
 
 DEFAULT_PRICE_SET_ID = 1
 
+class Category(models.Model):
+    """
+    Products can be assigned to a category.
+    """
+    name = models.CharField(max_length=80)
+
+    def __unicode__(self):
+        return self.name
+
 
 class PriceSet(models.Model):
     """
     Prices are organized in sets.
     Per default products use the DEFAULT_PRICE_SET_ID, which
-    will be most likely 1. (It is automatically created in 
+    will be most likely 1. (It is automatically created in
     migration 0002_create_default_price_set.)
     """
     name = models.CharField(max_length=20)
@@ -58,6 +67,9 @@ class Product(models.Model):
         default='/static/store/img/product_default.png')
 
     active = models.BooleanField(default=True)
+
+    # A product can be assigned to one or more categories
+    categories = models.ManyToManyField(Category)
 
     def __unicode__(self):
         return self.name
