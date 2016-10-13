@@ -5,6 +5,8 @@ import mete
 
 DEFAULT_PRICE_SET_ID = 1
 
+
+
 class Category(models.Model):
     """
     Products can be assigned to a category.
@@ -67,6 +69,7 @@ class Product(models.Model):
         default='/static/store/img/product_default.png')
 
     active = models.BooleanField(default=True)
+
 
     # A product can be assigned to one or more categories
     categories = models.ManyToManyField(Category)

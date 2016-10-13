@@ -10,6 +10,8 @@ from moneyed import Money
 
 from solo.models import SingletonModel
 
+from store import models as store_models
+
 
 class Account(models.Model):
     """
@@ -22,6 +24,7 @@ class Account(models.Model):
                                 null=False,
                                 blank=False,
                                 on_delete=models.CASCADE)
+
 
     avatar = models.ImageField(upload_to='avatars/',
                                default='/static/store/img/default_avatar.png',
@@ -45,6 +48,23 @@ class Account(models.Model):
     @property
     def name(self):
         return self.user.username
+
+
+class Barcode(models.Model):
+    """
+    Barcode(s) can be associated with an account
+    or with a product.
+    """
+    number = models.BigIntegerField(unique=True)
+
+    product = models.ForeignKey(store_models.Product,
+                                null=True,
+                                blank=True,
+                                on_delete=models.CASCADE)
+    account = models.OneToOneField(Account,
+                                   null=True,
+                                   blank=True,
+                                   on_delete=models.CASCADE)
 
 
 class KeyPair(models.Model):
@@ -179,7 +199,6 @@ class UserSetting(models.Model):
                                 on_delete=models.CASCADE)
 
     categories = models.ManyToManyField('store.Category',
-                                        null=True,
                                         blank=True)
 
 
