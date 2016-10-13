@@ -20,7 +20,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 
 from mete.models import Account, Transaction
-from store.models import Product
+from store.models import Product, Category
 
 from api import serializers
 from api.serializers import SessionSerializer, UserSerializer, \
@@ -29,7 +29,6 @@ from api.serializers import SessionSerializer, UserSerializer, \
                             PurchaseSerializer, TransferSerializer
 
 from backend.settings import BACKEND_VERSION
-
 
 from pprint import pprint
 
@@ -177,15 +176,36 @@ class UserAccountViewSet(ModelViewSet):
         model = auth_models.User
 
 
-class ProductsViewSet(ReadOnlyModelViewSet):
-    """
-    Get Products (readonly API)
-    """
+#class ProductsViewSet(ReadOnlyModelViewSet):
+#    """
+#    Get Products (readonly API)
+#    """
+#    queryset = Product.objects.filter(active=True)
+#    serializer_class = serializers.ProductSerializer
+#
+#    class Meta:
+#        model = Product
+#
+
+class ProductsViewSet(GenericViewSet):
+    """ReadOnly Products API"""
     queryset = Product.objects.filter(active=True)
     serializer_class = serializers.ProductSerializer
 
-    class Meta:
-        model = Product
+    def list(self, request):
+        """Get list of products"""
+
+        # Try to get user settings for the request user:
+        try:
+            filtered_categories = request.user.usersetting.categories.all()
+            products = Product.objects.filter(categories=filtered_categories)
+        except Exception as e:
+            products = Product.objects.all()
+
+        serializer = serializers.ProductSerializer(products, many=True)
+        return Response(serializer.data)
+
+
 
 
 class TransfersViewSet(GenericViewSet):

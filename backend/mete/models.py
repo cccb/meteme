@@ -168,5 +168,20 @@ class Transaction(models.Model):
     objects = TransactionManager()
 
 
+class UserSetting(models.Model):
+    """
+    Configure per user preferences, like:
+    Limiting categories. (This is it for now)
+    """
+    user = models.OneToOneField('auth.User',
+                                null=False,
+                                blank=False,
+                                on_delete=models.CASCADE)
+
+    categories = models.ManyToManyField('store.Category',
+                                        null=True,
+                                        blank=True)
+
+
 class Settings(SingletonModel):
     price_set = models.ForeignKey('store.PriceSet', null=True, blank=False, default=1)
