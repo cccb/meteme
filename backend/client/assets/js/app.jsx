@@ -38,13 +38,6 @@ var MainLayout = React.createClass({
       <div>
         <main className="container-main">
           {this.props.children}
-          <div className="row">
-            <div className="col-md-5">
-            </div /* end col left */ >
-            <div className="col-md-5 col-md-offset-1">
-              {this.props.aside}
-            </div /* end col right */>
-          </div /* end row */ >
         </main>
         <footer>
          (c) 1996-1999 Metigsoft Corp. All rights reseved.

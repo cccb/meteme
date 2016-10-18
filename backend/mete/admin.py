@@ -7,6 +7,9 @@ from solo.admin import SingletonModelAdmin
 import models
 import forms
 
+class UserSettingAdmin(admin.ModelAdmin):
+    list_display = ['user']
+
 class AccountAdmin(admin.ModelAdmin):
     list_display = ['id', 'user', 'balance', 'created_at', 'updated_at',
                     'is_locked', 'is_disabled']
@@ -67,6 +70,7 @@ class SettingsAdmin(SingletonModelAdmin):
 
 
 # Register model admins
+admin.site.register(models.UserSetting, UserSettingAdmin)
 admin.site.register(models.Account, AccountAdmin)
 admin.site.register(models.KeyPair, KeyPairAdmin)
 admin.site.register(models.Transaction, TransactionAdmin)
