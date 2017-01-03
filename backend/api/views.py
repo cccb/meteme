@@ -22,7 +22,7 @@ from rest_framework.response import Response
 from mete.models import Account, Transaction
 from store.models import Product, Category
 
-from api import serializers
+from api import serializers, utils
 from api.serializers import SessionSerializer, UserSerializer, \
                             AuthenticationSerializer, \
                             AccountSerializer, DepositSerializer, \
@@ -86,6 +86,19 @@ class UserAccountViewSet(ModelViewSet):
     queryset = auth_models.User.objects.filter(
         is_active=True,
         account__is_disabled=False).order_by('username')
+
+
+    def list(self, request):
+        """Fetch all user accounts, normalize username and sort"""
+        users = auth_models.User.objects.filter(
+            is_active=True,
+            account__is_disabled=False)
+
+        # New sorting
+        users = utils.sort_users(users)
+
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data)
 
     @detail_route(methods=['post'])
     def deposit(self, request, pk=None):
