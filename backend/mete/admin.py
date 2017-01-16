@@ -7,8 +7,28 @@ from solo.admin import SingletonModelAdmin
 import models
 import forms
 
+class BarcodeAdmin(admin.ModelAdmin):
+    list_display = ['id', 'number', '_type', '_target']
+
+
+    def _target(self, obj):
+        """Return name of user account or product"""
+        src = obj.product
+        if not src:
+            src = obj.account
+        return str(src)
+
+
+    def _type(self, obj):
+        """Return type of barcode"""
+        if obj.product:
+            return "Product"
+        return "Account"
+
+
 class UserSettingAdmin(admin.ModelAdmin):
     list_display = ['user']
+
 
 class AccountAdmin(admin.ModelAdmin):
     list_display = ['id', 'user', 'balance', 'created_at', 'updated_at',
@@ -19,6 +39,7 @@ class AccountAdmin(admin.ModelAdmin):
     readonly_fields = ['user']
 
     form = forms.AccountForm
+
 
 class KeyPairAdmin(admin.ModelAdmin):
     list_display = ['id', 'user', 'public_key', 'created_at', 'updated_at']
@@ -70,6 +91,7 @@ class SettingsAdmin(SingletonModelAdmin):
 
 
 # Register model admins
+admin.site.register(models.Barcode, BarcodeAdmin)
 admin.site.register(models.UserSetting, UserSettingAdmin)
 admin.site.register(models.Account, AccountAdmin)
 admin.site.register(models.KeyPair, KeyPairAdmin)

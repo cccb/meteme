@@ -19,7 +19,7 @@ from rest_framework.serializers import ValidationError
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 
-from mete.models import Account, Transaction
+from mete.models import Account, Transaction, Barcode
 from store.models import Product, Category
 
 from api import serializers, utils
@@ -307,7 +307,30 @@ class TransactionsLogViewSet(ReadOnlyModelViewSet):
     serializer_class = serializers.TransactionSerializer
 
 
+class BarcodeLookupViewSet(GenericViewSet):
+    """Lookup barcode"""
+
+    def retrieve(self, request, pk=None):
+        """
+        Fetch barcode and return serialized product
+        or serialized user.
+        """
+        try:
+            barcode = Barcode.objects.get(number=pk)
+        except:
+            return Response({'error': 'Barcode not found'}, status=404)
+
+
+        if barcode.account:
+            serializer = serializers.UserSerializer(barcode.account.user)
+        else:
+            serializer = serializers.ProductSerializer(barcode.product)
+
+        return Response(serializer.data)
+
+
 router = routers.DefaultRouter()
+router.register('barcode', BarcodeLookupViewSet, base_name='barcode')
 router.register('session', SessionViewSet, base_name='session')
 router.register('users', UserAccountViewSet)
 router.register('products', ProductsViewSet)
