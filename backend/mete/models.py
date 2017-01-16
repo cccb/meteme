@@ -10,6 +10,9 @@ from moneyed import Money
 
 from solo.models import SingletonModel
 
+from unidecode import unidecode
+
+import re
 
 class Account(models.Model):
     """
@@ -45,6 +48,15 @@ class Account(models.Model):
     @property
     def name(self):
         return self.user.username
+
+
+    @property
+    def canonical_name(self):
+        """Return normalized username"""
+        name = unidecode(self.name) # Transliterate umlauts
+        name = re.sub(r'\W', '', name).lower()
+        return name
+
 
 
 class KeyPair(models.Model):
