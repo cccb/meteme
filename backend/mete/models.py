@@ -65,7 +65,7 @@ class Barcode(models.Model):
     Barcode(s) can be associated with an account
     or with a product.
     """
-    number = models.BigIntegerField(unique=True)
+    number = models.CharField(unique=True, max_length=42)
 
     product = models.ForeignKey(store_models.Product,
                                 null=True,
