@@ -205,6 +205,8 @@ class ProductsViewSet(GenericViewSet):
     queryset = Product.objects.filter(active=True)
     serializer_class = serializers.ProductSerializer
 
+    permission_classes = [AllowAny,]
+
     def list(self, request):
         """Get list of products"""
 
