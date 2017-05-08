@@ -317,11 +317,12 @@ class BarcodeLookupViewSet(GenericViewSet):
         Fetch barcode and return serialized product
         or serialized user.
         """
-        try:
-            barcode = Barcode.objects.get(number=pk)
-        except:
-            return Response({'error': 'Barcode not found'}, status=404)
+        barcode, _ = Barcode.objects.get_or_create(number=pk)
 
+        # Return 404 if barcode is not associated
+        if not barcode.account and not barcode.product:
+            return Response({'error': 'Barcode not found.'},
+                            status=404)
 
         if barcode.account:
             serializer = serializers.UserSerializer(barcode.account.user)
