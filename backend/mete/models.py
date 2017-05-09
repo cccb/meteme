@@ -71,10 +71,10 @@ class Barcode(models.Model):
                                 null=True,
                                 blank=True,
                                 on_delete=models.CASCADE)
-    account = models.OneToOneField(Account,
-                                   null=True,
-                                   blank=True,
-                                   on_delete=models.CASCADE)
+    account = models.ForeignKey(Account,
+                                null=True,
+                                blank=True,
+                                on_delete=models.CASCADE)
 
 class KeyPair(models.Model):
     """
