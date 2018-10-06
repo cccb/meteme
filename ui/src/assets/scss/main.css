@@ -1,0 +1,19 @@
+.page {
+  background: black;
+  height: 100vh;
+  display: flex;
+  flex-direction: column; }
+  .page main {
+    flex: 1 0; }
+  .page footer {
+    display: flex;
+    flex-direction: row;
+    background: darkgrey;
+    color: black; }
+    .page footer .brand {
+      flex: 1;
+      margin-left: 10px; }
+    .page footer .copyright {
+      margin-right: 10px;
+      text-align: right;
+      flex: 1; }
