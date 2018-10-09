@@ -21,6 +21,7 @@
     "redux-thunk": "^2.3.0",
     "underscore": "^1.9.1"
   },
+  "proxy": "http://localhost:8080/",
   "scripts": {
     "build-css": "node-sass-chokidar --include-path ./src --include-path ./node_modules src/ -o src/",
     "watch-css": "npm run build-css && node-sass-chokidar --include-path ./src --include-path ./node_modules src/ -o src/ --watch --recursive",

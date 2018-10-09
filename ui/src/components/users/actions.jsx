@@ -10,7 +10,7 @@ export function fetchUsers() {
   return {
     type: HTTP_GET,
     payload: {
-      url: "/api/v1/users/",
+      url: "/api/users/",
 
       request: FETCH_USERS_REQUEST,
       success: FETCH_USERS_SUCCESS,

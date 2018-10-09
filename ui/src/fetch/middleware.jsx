@@ -1,8 +1,8 @@
 
 /*
- * Fetch Middleware
- * (c) 2018 Matthias Hannig
+ * Http Request Middleware
  */
+import axios from 'axios'
 
 import {HTTP_GET,
         HTTP_POST,
@@ -10,69 +10,55 @@ import {HTTP_GET,
         HTTP_DELETE} from './actions'
 
 
-
-const getCookie = function() {
-  const cookie = decodeURIComponent(document.cookie);
-  const parts = cookie.split("; ");
-  let data = {};
-
-  for (const p of parts) {
-    const [k, v] = p.split("=", 2);
-    data[k] = v;
+const makeAction = (type, payload={}) => {
+  return {
+    type: type,
+    payload: payload,
   }
-
-  return data;
 }
 
-const httpGet = function(opts, extra) {
-  fetch(opts.url,
-        Object.assign({}, extra, {
-          method: 'GET'
-        })
-  ).then((res) => {
-    console.log(res.json());
-  })
-  .catch((err) => {
-    console.log("ERRR:", err);
-  });
-};
+const makeHttpRequest = (handler) => (dispatch, opts, extra) => {
+  const data = opts["data"]||{};
+  dispatch(makeAction(opts.request));
+  handler(opts.url, data)
+    .then((res) => {
+      dispatch(makeAction(opts.success, res.data))
+    })
+    .catch((err) => {
+      dispatch(makeAction(opts.error, err.data));
+    });
+}
 
+const httpGet = makeHttpRequest(axios.get);
+const httpPost = makeHttpRequest(axios.post);
+const httpPut = makeHttpRequest(axios.put);
+const httpDelete = makeHttpRequest(axios.delete);
 
 const makeFetchMiddleware = (extra) =>
-  (dispatch, getState) => (next) => (action) => {
+  ({dispatch, getState}) => (next) => (action) => {
 
   // Check if we have an request to the server
-  if (!action.type.startsWith("@@fetch/")) {
+  if (!action.type.startsWith("@@request/")) {
     return next(action); // Just move on.
   }
 
-  // Handle http fetch
+  // Handle http request
   switch(action.type) {
     case HTTP_GET:
       return httpGet(dispatch, action.payload, extra);
 
     case HTTP_POST:
-      console.log("putting the data...");
-      break;
-    case HTTP_DELETE:
-      console.log("deleting da resource");
-      break;
+      return httpPost(dispatch, action.payload, extra);
+
     case HTTP_PUT:
-      console.log('Updading...');
-      break;
+      return httpPut(dispatch, action.payload, extra);
+
+    case HTTP_DELETE:
+      return httpDelete(dispatch, action.payload, extra);
 
     default:
       console.error("HTTP METHOD NOT IMPLEMENTED", action.type);
   }
-
 };
 
-
-const cookie = getCookie();
-export default makeFetchMiddleware({
-  headers: {
-    "X-CSRFToken": cookie["csrftoken"],
-    "Accept": "application/json",
-    "Content-Type": "application/json"
-  }
-});
+export default makeFetchMiddleware();

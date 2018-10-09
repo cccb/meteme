@@ -2,11 +2,7 @@
 import React from 'react'
 
 const Avatar = (props) => {
-  let url = props.url;
-  if (!url) {
-    url = "/default/avatar/path";
-  }
-
+  let url = props.user.account.avatar;
   return (
     <div className="avatar">
       <img src={url} alt="Avatar" />
@@ -19,7 +15,7 @@ export default (props) => {
 
   return (
     <div className="user" onClick={props.onClick}>
-      <Avatar url={props.user.avatar} />
+      <Avatar user={props.user} />
       <div className="username">
        {props.user.username}
       </div>

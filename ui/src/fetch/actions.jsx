@@ -1,8 +1,6 @@
 
-export const HTTP_GET = "@@fetch/HTTP_GET";
-export const HTTP_POST = "@@fetch/HTTP_POST";
-export const HTTP_PUT = "@@fetch/HTTP_PUT";
-export const HTTP_DELETE = "@@fetch/HTTP_DELETE";
-
-
+export const HTTP_GET = "@@request/HTTP_GET";
+export const HTTP_POST = "@@request/HTTP_POST";
+export const HTTP_PUT = "@@request/HTTP_PUT";
+export const HTTP_DELETE = "@@request/HTTP_DELETE";
 
