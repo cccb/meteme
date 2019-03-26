@@ -1,32 +1,33 @@
 from datetime import datetime
-
 from moneyed import Money
-
 from django.conf.urls import url, include
-from django.contrib.auth import login, logout, \
-                                models as auth_models
-
+from django.contrib.auth import (
+    login,
+    logout,
+    models as auth_models,
+)
 from django.contrib.auth.models import AnonymousUser
-
 from rest_framework import routers, status, views
 from rest_framework.decorators import detail_route
 from rest_framework.viewsets import ModelViewSet, GenericViewSet,\
                                     ReadOnlyModelViewSet
-
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.serializers import ValidationError
-
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 
 from mete.models import Account, Transaction, Barcode
 from store.models import Product, Category
-
-from api import serializers, utils
-from api.serializers import SessionSerializer, UserSerializer, \
-                            AuthenticationSerializer, \
-                            AccountSerializer, DepositSerializer, \
-                            PurchaseSerializer, TransferSerializer
+from api.v1 import serializers, utils
+from api.v1.serializers import (
+    SessionSerializer,
+    UserSerializer,
+    AuthenticationSerializer,
+    AccountSerializer,
+    DepositSerializer,
+    PurchaseSerializer,
+    TransferSerializer,
+)
 
 from backend.settings import BACKEND_VERSION
 
@@ -332,7 +333,7 @@ class BarcodeLookupViewSet(GenericViewSet):
         return Response(serializer.data)
 
 
-router = routers.DefaultRouter()
+router = routers.DefaultRouter(trailing_slash=False)
 router.register('barcode', BarcodeLookupViewSet, base_name='barcode')
 router.register('session', SessionViewSet, base_name='session')
 router.register('users', UserAccountViewSet)

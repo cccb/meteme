@@ -1,3 +1,7 @@
+
+from moneyed import Money
+from django.conf import settings
+from django.contrib.auth import models as auth_models
 from django.contrib.auth import authenticate
 from rest_framework.serializers import Serializer, ModelSerializer, \
                                        Field, ImageField, BooleanField, \
@@ -6,14 +10,8 @@ from rest_framework.serializers import Serializer, ModelSerializer, \
                                        DateTimeField, ReadOnlyField, \
                                        ValidationError
 
-from moneyed import Money
-
 from mete import models as mete_models
 from store import models as store_models
-
-from django.conf import settings
-from django.contrib.auth import models as auth_models
-
 
 
 class AccountNotLocked:
