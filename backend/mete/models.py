@@ -189,7 +189,10 @@ class Transaction(models.Model):
                         default_currency='EUR')
 
 
-    product = models.ForeignKey('store.Product', null=True, blank=True)
+    product = models.ForeignKey('store.Product',
+                                on_delete=models.CASCADE,
+                                null=True,
+                                blank=True)
     product_name = models.CharField(null=True, blank=True, max_length=80)
 
     created_at = models.DateTimeField(auto_now_add=True, blank=True)
@@ -212,4 +215,9 @@ class UserSetting(models.Model):
 
 
 class Settings(SingletonModel):
-    price_set = models.ForeignKey('store.PriceSet', null=True, blank=False, default=1)
+    price_set = models.ForeignKey(
+        'store.PriceSet',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=False,
+        default=1)
