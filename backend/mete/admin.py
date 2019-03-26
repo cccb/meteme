@@ -4,8 +4,7 @@ from django.shortcuts import render
 
 from solo.admin import SingletonModelAdmin
 
-import models
-import forms
+from mete import models, forms
 
 class BarcodeAdmin(admin.ModelAdmin):
     list_display = ['id', 'number', '_type', '_target']

@@ -1,5 +1,6 @@
 from django.contrib import admin
-import models
+
+from store import models
 
 
 class CategoryAdmin(admin.ModelAdmin):

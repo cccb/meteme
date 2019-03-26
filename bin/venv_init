@@ -6,12 +6,6 @@
 
 set -e
 
-PY27_SCL=/opt/rh/python27/enable
-if [ -r $PY27_SCL ]; then
-  echo "[i] Python 2.7 SCL detected"
-  source $PY27_SCL
-fi
-
 
 echo "[i] Setting up virtualenv (venv)"
 
@@ -29,7 +23,7 @@ if [ ! -d venv ]; then
 
     echo "[i] Using $VIRTUALENV"
 
-    $VIRTUALENV venv
+    $VIRTUALENV -p python2 venv
 fi
 
 echo "[i] Loading virtualenv (venv)"
