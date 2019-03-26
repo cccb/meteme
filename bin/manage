@@ -6,6 +6,6 @@ APPDIR=$BASEDIR/../backend
 echo "[i] Loading virtualenv (venv)"
 source $APPDIR/../venv/bin/activate
 
-cd $APPDIR && python2 manage.py $@
+cd $APPDIR && python3 manage.py $@
 
 
