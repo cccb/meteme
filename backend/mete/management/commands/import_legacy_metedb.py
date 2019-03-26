@@ -35,7 +35,7 @@ class Command(BaseCommand):
         rows = cursor.fetchall()
         columns = [col[0] for col in cursor.description]
 
-        result = [dict(zip(columns, row)) for row in rows]
+        result = [dict(list(zip(columns, row))) for row in rows]
         return result
 
 

@@ -13,22 +13,12 @@ BASEDIR=$(dirname $0)
 cd $BASEDIR/../
 
 if [ ! -d venv ]; then
-
-    # test which virtualenv tool to use
-    if which virtualenv2 >/dev/null; then
-    VIRTUALENV=virtualenv2
-    else
-    VIRTUALENV=virtualenv
-    fi
-
-    echo "[i] Using $VIRTUALENV"
-
-    $VIRTUALENV -p python2 venv
+    python3 -m venv venv
 fi
 
 echo "[i] Loading virtualenv (venv)"
 source venv/bin/activate
 
 echo "[i] Installing requirements"
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 
