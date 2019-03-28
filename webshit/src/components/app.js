@@ -11,6 +11,9 @@ import { Route, Switch } from 'react-router' // react-router v4
 
 import './app.css';
 
+// Components
+import MainLayout from './layout/main'
+
 export const history = createBrowserHistory()
 
 // Setup app reducer
@@ -28,11 +31,23 @@ const store = createStore(
   ),
 );
 
+// Pages
+const NotFoundPage = () => (
+  <div class="page page-404">
+    <h1>404 Not Found</h1>
+  </div>
+)
+
 
 const App = () => (
-  <div className="app">
-    Mete95 Millenials Edition
-  </div>
+  <Provider store={store}>
+    <ConnectedRouter history={history}>
+      <Switch>
+        <MainLayout />
+        <Route component={NotFoundPage} />
+      </Switch>
+    </ConnectedRouter>
+  </Provider>
 );
 
 export default App;

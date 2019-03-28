@@ -1,0 +1,60 @@
+
+body, html {
+    background: black;
+    height: 100%;
+}
+
+#root, .content {
+    height: 100%;
+}
+
+.content {
+    min-height: 1vh;
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    display: flex;
+    flex: 0;
+    background: darkcyan;
+    color: black;
+    padding: 4px 10px;
+}
+
+header .title {
+    flex: 1 0;
+}
+
+
+.stats td {
+    text-align: left;
+}
+.stats .value {
+    text-align: left; 
+    padding-left: 10px;
+}
+
+
+.content .main {
+    flex: 1 0;
+    overflow-y: auto;
+}
+
+footer {
+    background: darkblue;
+    flex: 0;
+    padding: 1px 10px;
+    display: flex;
+    flex-direction: row;
+}
+
+footer .title {
+   flex: 1 0; 
+}
+
+footer .copyright {
+    flex: 1 0;
+    text-align: right;
+}
+
