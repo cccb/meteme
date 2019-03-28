@@ -213,7 +213,7 @@ class ProductsViewSet(GenericViewSet):
         # Try to get user settings for the request user:
         try:
             filtered_categories = request.user.usersetting.categories.all()
-            products = Product.objects.filter(categories=filtered_categories)
+            products = Product.objects.filter(categories__in=filtered_categories)
         except Exception as e:
             products = Product.objects.all()
 
