@@ -6,7 +6,7 @@
 
 # == Helper: Get value from config file.
 function config_get {
-  python -c "from backend.settings import SERVER; print SERVER['$1']"
+  python -c "from backend.settings import SERVER; print(SERVER['$1'])"
 }
 
 # Enable python2.7 SCL if present
