@@ -43,7 +43,7 @@ class MoneyField(Field):
 
     def to_representation(self, obj):
         """ Money to string """
-        return obj.__unicode__()
+        return str(obj)
 
     def to_internal_value(self, data):
         """ String to Money """
