@@ -7,6 +7,7 @@
  */
 
 import axios from 'axios'
+import camelcaseKeys from 'camelcase-keys'
 
 
 // Request Action types
@@ -91,7 +92,7 @@ function handleFetch(dispatch, payload) {
 
   // Make request
   axios.get(endpoint)
-    .then((res) => (res.data))
+    .then((res) => (camelcaseKeys(res.data, {deep: true})))
     .catch((err) => {
       if (onError) { dispatch(onError(err)); }
     })
@@ -106,7 +107,7 @@ function handleCreate(dispatch, payload) {
 
   // Make request
   axios.post(endpoint, data)
-    .then((res) => (res.data))
+    .then((res) => (camelcaseKeys(res.data, {deep: true})))
     .catch((err) => {
       if (onError) { dispatch(onError(err)); }
     })
@@ -121,7 +122,7 @@ function handleUpdate(dispatch, payload) {
 
   // Make request
   axios.put(endpoint, data)
-    .then((res) => (res.data))
+    .then((res) => (camelcaseKeys(res.data, {deep: true})))
     .catch((err) => {
       if (onError) { dispatch(onError(err)); }
     })
@@ -136,7 +137,7 @@ function handleDestroy(dispatch, payload) {
 
   // Make request
   axios.delete(endpoint)
-    .then((res) => (res.data))
+    .then((res) => (camelcaseKeys(res.data, {deep: true})))
     .catch((err) => {
       if (onError) { dispatch(onError(err)); }
     })
