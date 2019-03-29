@@ -11,8 +11,10 @@ import { Route, Switch } from 'react-router' // react-router v4
 import { requestsMiddleware } from '../middleware/requests'
 import logger from 'redux-logger'
 
-
 import './app.css';
+
+// Reducers
+import statsReducer from './stats/reducer'
 
 // Components
 import MainLayout from './layout/main'
@@ -22,6 +24,7 @@ export const history = createBrowserHistory()
 // Setup app reducer
 const rootReducer = combineReducers({
   router: connectRouter(history),
+  stats: statsReducer,
 })
 
 

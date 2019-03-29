@@ -19,14 +19,17 @@ class StatsView  extends React.Component {
       <table className="stats">
         <tbody>
           <tr>
-            <td>TX this month:</td><td className="value">23</td>
-            <td>Total:</td><td className="value">19239</td>
+            <td>TX this month:</td>
+            <td className="value">{this.props.txCurrentMonth}</td>
+            <td>Total:</td>
+            <td className="value">{this.props.txTotal}</td>
           </tr>
           <tr>
-            <td>Users:</td><td className="value">23</td>
+            <td>Users:</td><td className="value">{this.props.users}</td>
           </tr>
           <tr>
-            <td>Money gauge:</td><td className="value">19329</td>
+            <td>Money gauge:</td>
+            <td className="value">{this.props.moneyGauge}</td>
           </tr>
         </tbody>
       </table>
@@ -36,6 +39,9 @@ class StatsView  extends React.Component {
 
 export default connect(
   (state) => ({
-
+    moneyGauge: state.stats.moneyGauge,
+    users: state.stats.users,
+    txTotal: state.stats.transactions.total,
+    txCurrentMonth: state.stats.transactions.currentMonth,
   })
 )(StatsView);
