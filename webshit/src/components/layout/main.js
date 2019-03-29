@@ -2,6 +2,7 @@
 import React from 'react';
 import { Route } from 'react-router' // react-router v4
 
+import ClockWidget from '../clock/widget'
 import StatsView from '../stats/view'
 import VersionLabel from '../stats/version-label'
 
@@ -12,7 +13,8 @@ const MainLayout = () => (
   <div className="content">
      <header>
       <div className="title">
-       Mete98 - v.<VersionLabel /> @ CCCB
+       Mete98 - v.<VersionLabel /> @ CCCB<br />
+       <ClockWidget />
       </div>
       <StatsView />
      </header>

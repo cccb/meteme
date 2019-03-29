@@ -12,6 +12,17 @@ class StatsView  extends React.Component {
 
   componentDidMount() {
     this.props.dispatch(fetchStats());
+
+    // Refresh stats every huh... 10 seconds or so...
+    this.refreshTimer = setInterval(() => {
+      this.props.dispatch(fetchStats());
+    }, 10000);
+  }
+
+  componentDidUnmount() {
+    if (this.refreshTimer) {
+      clearInterval(this.refreshTimer);
+    }
   }
 
   render() {
