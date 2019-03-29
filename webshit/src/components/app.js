@@ -8,6 +8,9 @@ import { connectRouter,
 import { applyMiddleware, compose, createStore } from 'redux'
 import { Provider } from 'react-redux'
 import { Route, Switch } from 'react-router' // react-router v4
+import { requestsMiddleware } from '../middleware/requests'
+import logger from 'redux-logger'
+
 
 import './app.css';
 
@@ -26,7 +29,9 @@ const store = createStore(
   rootReducer,
   compose(
     applyMiddleware(
+      logger,
       routerMiddleware(history),
+      requestsMiddleware,
     ),
   ),
 );
