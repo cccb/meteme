@@ -15,6 +15,7 @@ import './app.css';
 
 // Reducers
 import statsReducer from './stats/reducer'
+import usersReducer from './users/reducer'
 
 // Components
 import MainLayout from './layout/main'
@@ -25,6 +26,7 @@ export const history = createBrowserHistory()
 const rootReducer = combineReducers({
   router: connectRouter(history),
   stats: statsReducer,
+  users: usersReducer,
 })
 
 

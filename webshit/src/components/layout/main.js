@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Route } from 'react-router' // react-router v4
+import { Route, Redirect } from 'react-router' // react-router v4
 
 import ClockWidget from '../clock/widget'
 import StatsView from '../stats/view'
@@ -8,6 +8,7 @@ import VersionLabel from '../stats/version-label'
 
 import './main.css'
 
+import StoreMain from '../store/main'
 
 const MainLayout = () => (
   <div className="content">
@@ -19,7 +20,12 @@ const MainLayout = () => (
       <StatsView />
      </header>
      <div className="main">
-       <Route exact path="/" render={()=>(<h1>Foo</h1>)} />
+
+       <Route exact path="/" render={()=>(
+         <Redirect to="/store" />
+       )} />
+       <Route path="/store"
+                    component={StoreMain} />
      </div> 
      <footer>
        <div className="title">
