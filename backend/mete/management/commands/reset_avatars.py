@@ -24,7 +24,7 @@ class Command(BaseCommand):
         """
         accounts = mete_models.Account.objects.all()
         for account in accounts:
-            print("Processing: {}".format(account.user.username))
-            gravatar.download_to_account(account)
+            account.avatar = None
+            account.save()
 
 

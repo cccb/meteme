@@ -29,7 +29,7 @@ class Account(models.Model):
 
 
     avatar = models.ImageField(upload_to='avatars/',
-                               default='default_avatar.png',
+                               default=None,
                                null=True, blank=True)
 
     balance = MoneyField(max_digits=10,
