@@ -24,10 +24,12 @@ header {
 
 header .title {
     flex: 1 0;
+    color: white;
 }
 
 
 .stats td {
+    color: white;
     text-align: left;
 }
 .stats .value {
@@ -56,5 +58,17 @@ footer .title {
 footer .copyright {
     flex: 1 0;
     text-align: right;
+}
+
+
+header .toolbar {
+  padding: 2px 8px;
+}
+
+.toolbar-content .btn {
+  font-size: 35px;
+  line-height: 41px;
+  box-shadow: none;
+  border: 7px outset;
 }
 

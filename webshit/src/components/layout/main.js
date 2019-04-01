@@ -9,13 +9,18 @@ import VersionLabel from '../stats/version-label'
 import './main.css'
 
 import StoreMain from '../store/main'
+import StoreToolbar from '../store/toolbar'
 
 const MainLayout = () => (
   <div className="content">
      <header>
-      <div className="title">
-       Mete98 - v.<VersionLabel /> @ CCCB<br />
-       <ClockWidget />
+      <div className="block toolbar">
+         <Route path="/store"
+                      component={StoreToolbar} />
+      </div>
+      <div className="block title">
+         Mete98 - v.<VersionLabel /> @ CCCB<br />
+         <ClockWidget />
       </div>
       <StatsView />
      </header>

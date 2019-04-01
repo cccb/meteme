@@ -1,0 +1,39 @@
+
+/*
+ * Users Stylesheet
+ */
+
+.user-picker.user-picker-grid {
+  padding: 8px 5px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.user-picker-grid .user-picker-user .avatar img {
+  width: 80px;
+}
+
+.user-picker-grid .user-picker-user {
+  display: flex;
+  flex-direction: column;
+
+  border: 6px outset #aaa;
+  background: #333;
+
+  margin: 8px;
+  padding: 8px;
+  flex-basis: 175px;
+  text-align: center;
+
+  cursor: pointer;
+}
+
+
+.user-picker-grid .avatar {
+  flex: 1 0;
+}
+
+.user-picker.grid .username {
+  flex: 0;
+}
+

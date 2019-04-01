@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { Route, Redirect } from 'react-router'
 
 import PickUser from './pick-user'
+import ShowUser from './show-user'
 
 
 class StoreMain extends React.Component {
@@ -16,6 +17,10 @@ class StoreMain extends React.Component {
         
         <Route path="/store/pick-user"
                component={PickUser} />
+
+        <Route path="/store/users/:userId"
+               component={ShowUser} />
+      
       
       </div>
     );
