@@ -67,16 +67,20 @@ class ShowUser extends React.Component {
     }
   }
 
+  buyProduct(product) {
+    console.log("Checking out product:", product);
+  }
+
   render() {
     const user = this.props.user || {}; 
     return (
       <div className="user-view">
-        <div className="">
+        <div className="row">
           <div className="col-lg-5">
             <Account user={user} />
           </div>
         </div>
-        <ProductPicker onSelect={(product) => {this.buyProduct(product)}} />
+        <ProductPicker onClick={(product) => {this.buyProduct(product)}} />
       </div>
     );
   }

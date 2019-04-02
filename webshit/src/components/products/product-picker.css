@@ -1,0 +1,31 @@
+
+.grid-products {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap; 
+}
+
+.grid-products .product {
+  cursor: pointer;
+
+  flex: 1;
+  text-align: center;
+  margin: 16px;
+
+  border: 8px outset;
+  background: darkgrey;
+  color: black;
+}
+
+.grid-products .product-info {
+  padding: 10px;
+}
+
+.grid-products .product p {
+  margin: 0px;
+}
+
+.grid-products .product img {
+  width: 80px;
+}
+

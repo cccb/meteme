@@ -14,6 +14,10 @@ body, html {
     flex-direction: column;
 }
 
+.main .row {
+  margin: 0px 0px;
+}
+
 header {
     display: flex;
     flex: 0;
