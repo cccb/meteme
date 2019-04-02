@@ -66,7 +66,8 @@ class Product(models.Model):
 
     picture = models.ImageField(
         upload_to='products/',
-        default='/static/store/img/product_default.png')
+        blank=True, null=True,
+        default=None)
 
     active = models.BooleanField(default=True)
 
