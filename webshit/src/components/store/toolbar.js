@@ -2,8 +2,26 @@ import React from 'react'
 import { connect } from 'react-redux'
 
 import { Route } from 'react-router'
+import { goBack } from 'connected-react-router'
 
 import { fetchUsers } from '../users/actions'
+
+const _BackButton = (props) => (
+  <button onClick={props.goBack}
+          className="btn btn-back">
+    Back 
+  </button>
+);
+
+const BackButton = connect(
+  (state) => ({}),
+  (dispatch) => ({
+    "goBack": () => {
+      dispatch(goBack());
+    }
+  })
+)(_BackButton);
+
 
 const _ReloadUserButton = (props) => (
   <button onClick={props.refreshUsers}
@@ -32,6 +50,11 @@ class StoreToolbar extends React.Component {
         <Route path="/store/pick-user"
                render={() => (
                   <ReloadUsersButton />
+        )} />
+
+        <Route path="/store/users/:userId"
+               render={() => (
+                  <BackButton />
         )} />
       
       </div>

@@ -1,0 +1,53 @@
+
+.user-view {
+  padding: 16px 8px;
+}
+
+
+.user-view .avatar img {
+  width: 120px;
+}
+
+.user-view .account .datatable td {
+  padding: 5px;
+}
+
+.user-view .account .datatable .value {
+  color: white;
+}
+
+.user-view .account {
+  display: flex;
+  flex-direction: row;
+}
+
+.user-view .account .avatar {
+  flex: 0 0;
+  padding-right: 16px;
+}
+
+.user-view .account .info {
+  flex: 1;
+}
+
+.user-view .account td {
+  white-space: nowrap;
+}
+
+.user-view .account .actions {
+  text-align: right;
+}
+
+.user-view .info .btn {
+  box-shadow: none;
+  line-height: 40px;
+  font-size: 25px;
+  padding-left: 16px;
+  padding-right: 16px;
+  border: 7px outset;
+  margin-left: 16px;
+}
+
+.user-view .actions .btn:first-letter {
+  color: green;
+}

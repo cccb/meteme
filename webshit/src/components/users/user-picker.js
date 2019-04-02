@@ -7,26 +7,11 @@ import { connect } from 'react-redux'
 
 import { fetchUsers } from './actions'
 
+import Avatar from './avatar'
+
 // Assets
-import defaultAvatar from './img/default_avatar.png'
 import "./users.css"
 
-
-const Avatar = (props) => {
-
-  let picture = props.picture;
-  if (!picture) {
-    picture = defaultAvatar;
-  }
-
-  return (
-    <div className="avatar">
-      <img alt="Avatar"
-           title="Profile Picture"
-           src={picture} />
-    </div>
-  );
-}
 
 const User = (props) => (
   <div className="user-picker-user"

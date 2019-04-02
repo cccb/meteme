@@ -19,7 +19,7 @@ class StatsView  extends React.Component {
     }, 10000);
   }
 
-  componentDidUnmount() {
+  componentWillUnmount() {
     if (this.refreshTimer) {
       clearInterval(this.refreshTimer);
     }

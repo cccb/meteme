@@ -26,7 +26,7 @@ class Clock extends React.Component {
     }, 1000);
   }
 
-  componentDidUnmount() {
+  componentWillUnmount() {
     if(this.timer) {
       clearInterval(this.timer);
     }
