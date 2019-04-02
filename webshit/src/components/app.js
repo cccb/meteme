@@ -16,6 +16,7 @@ import './app.css';
 // Reducers
 import statsReducer from './stats/reducer'
 import usersReducer from './users/reducer'
+import productsReducer from './products/reducer'
 
 // Components
 import MainLayout from './layout/main'
@@ -27,6 +28,7 @@ const rootReducer = combineReducers({
   router: connectRouter(history),
   stats: statsReducer,
   users: usersReducer,
+  products: productsReducer,
 })
 
 

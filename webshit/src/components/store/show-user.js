@@ -6,6 +6,7 @@ import { connect } from 'react-redux'
 
 import Panel from '../layout/panel'
 import Avatar from '../users/avatar'
+import ProductPicker from '../products/product-picker'
 
 import {fetchUser} from '../users/actions'
 
@@ -54,17 +55,6 @@ return (
   );
 }
 
-const Actions = (props) => {
-  if (!props.user) {
-    return null;
-  }
-
-  return (
-    <Panel title="Tools" className="panel-grey actions">
-    </Panel>
-  );
-} 
-
 
 class ShowUser extends React.Component {
   componentDidMount() {
@@ -86,6 +76,7 @@ class ShowUser extends React.Component {
             <Account user={user} />
           </div>
         </div>
+        <ProductPicker onSelect={(product) => {this.buyProduct(product)}} />
       </div>
     );
   }
