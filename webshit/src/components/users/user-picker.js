@@ -16,7 +16,7 @@ import "./users.css"
 const User = (props) => (
   <div className="user-picker-user"
        onClick={props.onClick}>
-    <Avatar picture={props.user.account.avatar} />
+    <Avatar user={props.user} />
     <div className="username">
       {props.user.username}
     </div>

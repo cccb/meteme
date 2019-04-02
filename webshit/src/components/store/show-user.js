@@ -23,7 +23,7 @@ const Account = (props) => {
 return (
     <Panel title="Account">
       <div className="account"> 
-        <Avatar picture={account.avatar} />
+        <Avatar user={user} />
         <div className="info">
           <table className="datatable">
             <tbody>

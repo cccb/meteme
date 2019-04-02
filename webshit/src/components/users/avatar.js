@@ -1,11 +1,16 @@
 
 import React from 'react'
 
-import defaultAvatar from './img/default_avatar.png'
 
 export default (props) => {
+  if (!props.user) {
+    return null;
+  }
 
-  let picture = props.picture;
+  const avatarId = 10000 + props.user.id;
+  const defaultAvatar = `/assets/default-avatars/default-${avatarId}.jpg`;
+
+  let picture = props.user.account.avatar;
   if (!picture) {
     picture = defaultAvatar;
   }
