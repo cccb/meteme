@@ -1,5 +1,5 @@
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
 
 import { fetchProducts } from './actions'
@@ -26,33 +26,31 @@ const ProductPicture = (props) => {
 const Product = (props) => {
   const product = props.product;
   return (
-    <div className="product"
+    <button className="product"
          onClick={props.onClick}>
       <ProductPicture product={product} />
       <div className="product-info">
         <p className="name">{product.name}</p>
         <p className="price">{product.price}</p>
       </div>
-    </div>
+    </button>
   );
 }
 
 
-class ProductPicker extends React.Component {
-  componentDidMount() {
-    this.props.dispatch(fetchProducts());
-  }
+const ProductPicker = (props) => {
+  useEffect(() => {
+    props.dispatch(fetchProducts());
+  }, []);
   
-  render() {
-    return (
-      <div className="grid grid-products">
-        {this.props.products.map((product) =>
-          <Product key={product.id}
-                   product={product}
-                   onClick={() => this.props.onClick(product)} />)}
-      </div>
-    );
-  }
+  return (
+    <div className="grid grid-products">
+      {props.products.map((product) =>
+        <Product key={product.id}
+                 product={product}
+                 onClick={() => props.onClick(product)} />)}
+    </div>
+  );
 }
 
 export default connect(
