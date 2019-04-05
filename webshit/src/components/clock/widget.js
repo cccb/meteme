@@ -4,46 +4,32 @@
  */
 
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import moment from 'moment'
 
-class Clock extends React.Component {
+export default function Clock(props) {
+  const [time, setTime] = useState(moment());
 
-  constructor(props) {
-    super(props);
-
-    // Initial state
-    this.state = {
-      time: moment(),
-    };
-  }
-
-  componentDidMount() {
-    this.timer = setInterval(() => {
-      this.setState((state, props) => ({
-        time: moment(),
-      }))
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTime(moment());  
     }, 1000);
-  }
 
-  componentWillUnmount() {
-    if(this.timer) {
-      clearInterval(this.timer);
+    return () => {
+      clearInterval(timer);
     }
-  }
+  }, [props.format]);
 
-  render() {
-    let format = this.props.format;
-    if (!format) {
-      format = "MMMM Do YYYY, HH:mm:ss";
-    }
-    return (
-      <span className="clock">
-        {this.state.time.format(format)}
-      </span>
-    );
+  // Render clock
+  let format = props.format;
+  if (!format) {
+    format = "MMMM Do YYYY, HH:mm:ss";
   }
+  return (
+    <span className="clock">
+      {time.format(format)}
+    </span>
+  );
 }
 
 
-export default Clock;
