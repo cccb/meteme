@@ -2,7 +2,7 @@
 /*
  * Pick a user
  */
-import React from 'react'
+import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
 
 import { fetchUsers } from './actions'
@@ -24,22 +24,23 @@ const User = (props) => (
 );
 
 
-class UserPicker extends React.Component {
-  componentDidMount() {
-    this.props.dispatch(fetchUsers());
-  }
+const UserPicker = (props) => {
+  const {dispatch,
+         users} = props;
 
-  render() {
-    return (
-      <div className="user-picker user-picker-grid">
-        {this.props.users.map( user => (
-          <User key={user.id}
-                onClick={() => this.props.onClick(user)}
-                user={user} />
-        ))}
-      </div>
-    );
-  }
+  useEffect(() => { 
+    dispatch(fetchUsers());
+  }, []);
+
+  return (
+    <div className="user-picker user-picker-grid">
+      {users.map( user => (
+        <User key={user.id}
+              onClick={() => props.onClick(user)}
+              user={user} />
+      ))}
+    </div>
+  );
 }
 
 export default connect(
