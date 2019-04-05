@@ -1,0 +1,15 @@
+
+.grid-deposit .btn-amount {
+  flex: 1;
+
+  margin: 16px;
+  padding: 16px;
+  border: 7px outset;
+
+  background: darkgrey;
+}
+
+
+.grid-deposit .btn-amount img {
+  height: 150px;
+}

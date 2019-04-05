@@ -21,7 +21,6 @@ class StoreMain extends React.Component {
         <Route path="/store/users/:userId"
                component={ShowUser} />
       
-      
       </div>
     );
   }
