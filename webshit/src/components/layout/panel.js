@@ -5,7 +5,7 @@ import "./panel.css"
 
 
 export default function Panel(props) {
-  let panelClassName = "panel " + this.props.className;
+  let panelClassName = "panel " + props.className;
 
   return (
     <div className={panelClassName}>
