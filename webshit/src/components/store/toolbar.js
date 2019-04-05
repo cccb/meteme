@@ -42,24 +42,22 @@ const ReloadUsersButton = connect(
 )(_ReloadUserButton);
 
 
-class StoreToolbar extends React.Component {
-  render() {
-    return (
-      <div className="toolbar-content toolbar-store">
-        
-        <Route path="/store/pick-user"
-               render={() => (
-                  <ReloadUsersButton />
-        )} />
-
-        <Route path="/store/users/:userId"
-               render={() => (
-                  <BackButton />
-        )} />
+const StoreToolbar = (props) => {
+  return (
+    <div className="toolbar-content toolbar-store">
       
-      </div>
-    );
-  }
+      <Route path="/store/pick-user"
+             render={() => (
+                <ReloadUsersButton />
+      )} />
+
+      <Route path="/store/users/:userId"
+             render={() => (
+                <BackButton />
+      )} />
+    
+    </div>
+  );
 }
 
 
