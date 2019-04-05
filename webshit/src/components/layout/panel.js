@@ -1,27 +1,23 @@
 
 import React from 'react'
-import {Component} from 'react'
 
 import "./panel.css"
 
 
-export default class Panel extends Component {
+export default function Panel(props) {
+  let panelClassName = "panel " + this.props.className;
 
-  render() {
-    let panelClassName = "panel " + this.props.className;
-
-    return (
-      <div className={panelClassName}>
-        <div className="panel-title-container">
-          <span className="panel-title">
-            {this.props.title}
-          </span>
-        </div>
-        <div className="panel-content">
-          {this.props.children}
-        </div>
+  return (
+    <div className={panelClassName}>
+      <div className="panel-title-container">
+        <span className="panel-title">
+          {props.title}
+        </span>
       </div>
-    );
-  }
+      <div className="panel-content">
+        {props.children}
+      </div>
+    </div>
+  );
 }
 
