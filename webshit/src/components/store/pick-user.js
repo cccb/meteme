@@ -6,24 +6,18 @@ import { push } from 'connected-react-router'
 import UserPicker from '../users/user-picker'
 
 
-class PickUser extends React.Component {
+const PickUser = (props) => {
+  const {dispatch} = props;
 
-  chooseUser(user) {
+  const onSelectUser = (user) => {
     const userPath = `/store/users/${user.id}`;
-    this.props.dispatch(push(userPath));    
+    dispatch(push(userPath));    
   }
 
-  render() {
-    return (
-      <UserPicker onClick={(user) => this.chooseUser(user)} /> 
-    );
-  }
+  return (
+    <UserPicker onClick={onSelectUser} /> 
+  );
 }
 
-
-export default connect(
-  (state) => ({
-
-  })
-)(PickUser);
+export default connect()(PickUser);
 

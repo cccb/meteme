@@ -7,7 +7,7 @@ import Avatar from '../users/avatar'
 
 export default function Account(props) {
   const user = props.user || {};
-  const account = props.user.account;
+  const account = user.account;
 
   if (!account) {
     return null;

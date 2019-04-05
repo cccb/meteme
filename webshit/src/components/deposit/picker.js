@@ -6,7 +6,7 @@ import imgEur10 from './img/eur10.jpg'
 import imgEur20 from './img/eur20.jpg'
 import imgEur50 from './img/eur50.jpg'
 
-import './deposit-picker.css'
+import './picker.css'
 
 const Amount = (props) => {
   const icons = {
