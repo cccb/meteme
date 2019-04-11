@@ -11,7 +11,7 @@ import UserPicker from '../users/user-picker'
 import DepositPicker from '../deposit/picker'
 
 import {fetchUser} from '../users/actions'
-import {deposit} from './actions'
+import {deposit, purchase} from './actions'
 
 import "./show-user.css"
 
@@ -21,7 +21,7 @@ const ShowUser = (props) => {
 
   // Handlers
   const buyProduct = (product) => {
-    console.log("Checking out product:", product);
+    dispatch(purchase(user, product));
   }
 
   const navigateTo = (target) => {

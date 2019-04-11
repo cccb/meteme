@@ -38,11 +38,47 @@ export const depositError = (error) => ({
 
 export const deposit = (user, amount) => create(
   `/api/v1/users/${user.id}/deposit`, {
-    "amount": amount,
+    amount: amount,
   },
   depositRequest,
   depositSuccess,
   depositError,
   true,
 );
+
+
+export const purchaseSuccess = (result) => {
+  const {product, user} = result;
+
+  return {
+    type: PURCHASE_SUCCESS,
+    payload: {
+      product: product,
+      user: user,
+    }
+  };
+};
+
+export const purchaseRequest = () => ({
+  type: PURCHASE_SUCCESS,
+  payload: {},
+});
+
+export const purchaseError = (error) => ({
+  type: PURCHASE_ERROR,
+  payload: {
+    error: error,
+  }
+});
+
+export const purchase = (user, product) => create(
+  `/api/v1/users/${user.id}/purchase`, {
+    product: product.id,
+  },
+  purchaseRequest,
+  purchaseSuccess,
+  purchaseError,
+  true, 
+);
+
 
