@@ -10,6 +10,8 @@ import { FETCH_USERS_REQUEST,
          FETCH_USER_SUCCESS,
          FETCH_USER_ERROR} from './actions'
 
+import { DEPOSIT_SUCCESS }
+  from '../store/actions'
 
 const initialState = {
   all: [],
@@ -45,6 +47,11 @@ export default function reducer(state=initialState, action) {
     case FETCH_USER_SUCCESS:
       return Object.assign({}, state, {
         isLoading: false,
+        current: action.payload.user,
+      });
+
+    case DEPOSIT_SUCCESS:
+      return Object.assign({}, state, {
         current: action.payload.user,
       });
     default:

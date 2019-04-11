@@ -39,6 +39,27 @@ const LoadingIndicator = (props) => {
 }
 
 
+const RequestError = (props) => {
+  const {error} = props;
+  if (!error) {
+    return null;
+  }
+
+  let errorMsg = "";
+  if (typeof(error) === "object") {
+    if (error.response && error.response.data) {
+      errorMsg = error.response.data.detail;
+    }
+  }
+
+  return (
+    <div className="error">
+      <h1>Error!</h1>
+      <p>{errorMsg}</p>
+    </div>
+  );
+}
+
 const Overlay = (props) => {
   const {dispatch,
          showModal,
@@ -61,11 +82,14 @@ const Overlay = (props) => {
       <div className="overlay-modal">
         <div className="overlay-content">
           <div className="overlay-body">
-            <div className="action">
-               <LoadingIndicator /> Please wait...
-            </div>
+            {isLoading && 
+              <div className="action">
+                 <LoadingIndicator /> Please wait...
+              </div>
+            }
+            <RequestError error={error} />
           </div>
-          {!isLoading &&
+          {isFinished &&
             <div className="overlay-actions">
               <button onClick={closeModal}
                       className="btn btn-lg">Close</button>

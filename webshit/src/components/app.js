@@ -31,7 +31,7 @@ const rootReducer = combineReducers({
   users: usersReducer,
   products: productsReducer,
   requests: requestsReducer,
-})
+});
 
 
 const store = createStore(

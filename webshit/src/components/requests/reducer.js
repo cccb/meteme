@@ -56,6 +56,7 @@ function _handleSuccess(state, payload) {
     endpoint: "",
     isLoading: false,
     isFinished: true,
+    showModal: false,
   });
 }
 
@@ -67,6 +68,7 @@ function _handleError(state, payload) {
 
   return Object.assign({}, state, {
     isLoading: false,
+    isFinished: true,
     error: error,
   });
 }

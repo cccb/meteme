@@ -11,6 +11,7 @@ import UserPicker from '../users/user-picker'
 import DepositPicker from '../deposit/picker'
 
 import {fetchUser} from '../users/actions'
+import {deposit} from './actions'
 
 import "./show-user.css"
 
@@ -38,7 +39,7 @@ const ShowUser = (props) => {
   }
 
   const depositAmount = (amount) => {
-    console.log("Depositing amount:", amount);
+    dispatch(deposit(user, amount));
   }
 
   // Load user data

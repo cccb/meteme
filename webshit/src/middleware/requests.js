@@ -11,24 +11,24 @@ import camelcaseKeys from 'camelcase-keys'
 
 
 // Request Action types
-export const REQUEST_TYPE_PREFIX = "@@requests";
+export const REQUEST_TYPE_PREFIX = "@requests";
 
-export const REQUEST_FETCH = `${REQUEST_TYPE_PREFIX}/FETCH`;
+export const REQUEST_FETCH = `@${REQUEST_TYPE_PREFIX}/FETCH`;
 export const FETCH_REQUEST = `${REQUEST_TYPE_PREFIX}/FETCH_REQUEST`;
 export const FETCH_SUCCESS = `${REQUEST_TYPE_PREFIX}/FETCH_SUCCESS`;
 export const FETCH_ERROR   = `${REQUEST_TYPE_PREFIX}/FETCH_ERROR`;
 
-export const REQUEST_CREATE = `${REQUEST_TYPE_PREFIX}/CREATE`;
+export const REQUEST_CREATE = `@${REQUEST_TYPE_PREFIX}/CREATE`;
 export const CREATE_REQUEST = `${REQUEST_TYPE_PREFIX}/CREATE_REQUEST`;
 export const CREATE_SUCCESS = `${REQUEST_TYPE_PREFIX}/CREATE_SUCCESS`;
 export const CREATE_ERROR   = `${REQUEST_TYPE_PREFIX}/CREATE_ERROR`;
 
-export const REQUEST_UPDATE = `${REQUEST_TYPE_PREFIX}/UPDATE`;
+export const REQUEST_UPDATE = `@${REQUEST_TYPE_PREFIX}/UPDATE`;
 export const UPDATE_REQUEST = `${REQUEST_TYPE_PREFIX}/UPDATE_REQUEST`;
 export const UPDATE_SUCCESS = `${REQUEST_TYPE_PREFIX}/UPDATE_SUCCESS`;
 export const UPDATE_ERROR   = `${REQUEST_TYPE_PREFIX}/UPDATE_ERROR`;
 
-export const REQUEST_DESTROY = `${REQUEST_TYPE_PREFIX}/DESTROY`;
+export const REQUEST_DESTROY = `@${REQUEST_TYPE_PREFIX}/DESTROY`;
 export const DESTROY_REQUEST = `${REQUEST_TYPE_PREFIX}/DESTROY_REQUEST`;
 export const DESTROY_SUCCESS = `${REQUEST_TYPE_PREFIX}/DESTROY_SUCCESS`;
 export const DESTROY_ERROR   = `${REQUEST_TYPE_PREFIX}/DESTROY_ERROR`;
@@ -38,44 +38,44 @@ export const DESTROY_ERROR   = `${REQUEST_TYPE_PREFIX}/DESTROY_ERROR`;
 const _request = (type) => (endpoint, blocking) => ({
   type: type,
   payload: { 
-    endpoint,
-    blocking,
+    endpoint: endpoint,
+    blocking: blocking,
   },
 });
 
 const _success = (type) => (endpoint, data, blocking) => ({
   type: type,
   payload: {
-    endpoint,
-    data,
-    blocking,
+    endpoint: endpoint,
+    data: data,
+    blocking: blocking,
   }
 });
 
 const _error = (type) => (endpoint, error, blocking) => ({
-  type: FETCH_ERROR,
+  type: type,
   payload: {
-    endpoint,
-    error,
-    blocking,
+    endpoint: endpoint,
+    error: error,
+    blocking: blocking,
   }
 });
   
 const fetchRequest = _request(FETCH_REQUEST);
 const fetchSuccess = _success(FETCH_SUCCESS);
-const fetchError = _error(FETCH_ERROR);
+const fetchError   = _error(FETCH_ERROR);
 
 const createRequest = _request(CREATE_REQUEST);
-const createSuccess = _request(CREATE_SUCCESS);
-const createError = _request(CREATE_ERROR);
+const createSuccess = _success(CREATE_SUCCESS);
+const createError   = _error(CREATE_ERROR);
 
 const updateRequest = _request(UPDATE_REQUEST);
 const updateSuccess = _success(UPDATE_SUCCESS);
-const updateError = _error(UPDATE_ERROR);
+const updateError   = _error(UPDATE_ERROR);
 
 const destroyRequest = _request(DESTROY_REQUEST);
 const destroySuccess = _success(DESTROY_SUCCESS);
-const destroyError = _error(DESTROY_ERROR);
+const destroyError   = _error(DESTROY_ERROR);
 
 
 function request(
@@ -84,8 +84,8 @@ function request(
     onRequest,
     onSuccess,
     onError,
-    data=null,
-    blocking=false,
+    data,
+    blocking,
   ) {
   return {
     type: methodActionType,
@@ -258,7 +258,7 @@ function handleRequestAction(dispatch, action) {
 
 export const requestsMiddleware = (store) => (next) => (action) => {
   // Handle request actions
-  if (action.type.startsWith(REQUEST_TYPE_PREFIX)) {
+  if (action.type.startsWith("@"+REQUEST_TYPE_PREFIX)) {
     return handleRequestAction(store.dispatch, action);
   }
 
