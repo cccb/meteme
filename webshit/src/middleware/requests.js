@@ -170,13 +170,13 @@ function handleFetch(dispatch, payload) {
   // Make request
   axios.get(endpoint)
     .then((res) => (camelcaseKeys(res.data, {deep: true})))
-    .catch((err) => {
-      dispatch(fetchError(endpoint, err, blocking));
-      if (onError) { dispatch(onError(err)); }
-    })
     .then((data) => {
       dispatch(fetchSuccess(endpoint, data, blocking));
       if (onSuccess) { dispatch(onSuccess(data)) }
+    })
+    .catch((err) => {
+      dispatch(fetchError(endpoint, err, blocking));
+      if (onError) { dispatch(onError(err)); }
     });
 }
 
@@ -189,13 +189,13 @@ function handleCreate(dispatch, payload) {
   // Make request
   axios.post(endpoint, data)
     .then((res) => (camelcaseKeys(res.data, {deep: true})))
-    .catch((err) => {
-      dispatch(createError(endpoint, err, blocking));
-      if (onError) { dispatch(onError(err)); }
-    })
     .then((data) => {
       dispatch(createSuccess(endpoint, data, blocking));
       if (onSuccess) { dispatch(onSuccess(data)) }
+    })
+    .catch((err) => {
+      dispatch(createError(endpoint, err, blocking));
+      if (onError) { dispatch(onError(err)); }
     });
 }
 
@@ -208,13 +208,13 @@ function handleUpdate(dispatch, payload) {
   // Make request
   axios.put(endpoint, data)
     .then((res) => (camelcaseKeys(res.data, {deep: true})))
-    .catch((err) => {
-      dispatch(updateError(endpoint, err, blocking));
-      if (onError) { dispatch(onError(err)); }
-    })
     .then((data) => {
       dispatch(updateSuccess(endpoint, data, blocking));
       if (onSuccess) { dispatch(onSuccess(data)) }
+    })
+    .catch((err) => {
+      dispatch(updateError(endpoint, err, blocking));
+      if (onError) { dispatch(onError(err)); }
     });
 }
 
@@ -227,14 +227,14 @@ function handleDestroy(dispatch, payload) {
   // Make request
   axios.delete(endpoint)
     .then((res) => (camelcaseKeys(res.data, {deep: true})))
+    .then((data) => {
+      dispatch(destroySuccess(endpoint, data, blocking));
+      if (onSuccess) { dispatch(onSuccess(data)) }
+    })
     .catch((err) => {
       dispatch(destroyError(endpoint, err, blocking));
       if (onError) { dispatch(onError(err)); }
     })
-    .then((data) => {
-      dispatch(destroySuccess(endpoint, data, blocking));
-      if (onSuccess) { dispatch(onSuccess(data)) }
-    });
 }
 
 /*
