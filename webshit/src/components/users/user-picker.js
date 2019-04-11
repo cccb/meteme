@@ -23,14 +23,29 @@ const User = (props) => (
   </div>
 );
 
+const UserError = (props) => {
+  const {error} = props;
+  if (!error) {
+    return null;
+  }
+
+
+  return (
+    <div className="user-error">
+      {error.message}
+    </div>
+  );
+}
 
 const UserPicker = (props) => {
   const {dispatch,
+         error,
          users} = props;
 
   useEffect(() => { 
     dispatch(fetchUsers());
   }, []);
+
 
   return (
     <div className="user-picker user-picker-grid">
@@ -39,6 +54,7 @@ const UserPicker = (props) => {
               onClick={() => props.onClick(user)}
               user={user} />
       ))}
+      <UserError error={error} />
     </div>
   );
 }

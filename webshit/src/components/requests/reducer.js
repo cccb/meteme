@@ -25,6 +25,7 @@ const initialState = {
   endpoint: "",
   showModal: false,
   isLoading: false,
+  isFinished: false,
   error: null,
 }
 
@@ -40,6 +41,7 @@ function _handleRequest(state, payload) {
     endpoint: endpoint,
     showModal: true,
     isLoading: true,
+    isFinished: false,
     error: null,
   });
 }
@@ -52,8 +54,8 @@ function _handleSuccess(state, payload) {
 
   return Object.assign({}, state, {
     endpoint: "",
-    showModal: false,
     isLoading: false,
+    isFinished: true,
   });
 }
 
@@ -67,7 +69,6 @@ function _handleError(state, payload) {
     isLoading: false,
     error: error,
   });
-
 }
 
 

@@ -10,9 +10,11 @@ import './main.css'
 
 import StoreMain from '../store/main'
 import StoreToolbar from '../store/toolbar'
+import RequestOverlay from '../requests/overlay'
 
 const MainLayout = () => (
   <div className="content">
+     <RequestOverlay />
      <header>
       <div className="block toolbar">
          <Route path="/store"
