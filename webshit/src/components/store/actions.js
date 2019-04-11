@@ -92,6 +92,6 @@ export const mainScreenTransitionRequest = () => ({
 
 
 export const mainScreenTransitionSuccess = () => ({
-  type: REQUEST_MAIN_SCREEN_TRANSITION,
+  type: MAIN_SCREEN_TRANSITION_SUCCESS,
   payload: {},
 });

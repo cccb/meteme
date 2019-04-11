@@ -14,10 +14,11 @@ import logger from 'redux-logger'
 import './app.css';
 
 // Reducers
-import statsReducer from './stats/reducer'
-import usersReducer from './users/reducer'
+import statsReducer    from './stats/reducer'
+import usersReducer    from './users/reducer'
 import productsReducer from './products/reducer'
 import requestsReducer from './requests/reducer'
+import storeReducer    from './store/reducer'
 
 // Components
 import MainLayout from './layout/main'
@@ -27,6 +28,7 @@ export const history = createBrowserHistory()
 // Setup app reducer
 const rootReducer = combineReducers({
   router: connectRouter(history),
+  store: storeReducer,
   stats: statsReducer,
   users: usersReducer,
   products: productsReducer,
@@ -50,7 +52,7 @@ const NotFoundPage = () => (
   <div class="page page-404">
     <h1>404 Not Found</h1>
   </div>
-)
+);
 
 
 const App = () => (

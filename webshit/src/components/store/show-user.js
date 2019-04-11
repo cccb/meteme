@@ -11,13 +11,18 @@ import UserPicker from '../users/user-picker'
 import DepositPicker from '../deposit/picker'
 
 import {fetchUser} from '../users/actions'
-import {deposit, purchase} from './actions'
+import {deposit, purchase, mainScreenTransitionSuccess} from './actions'
 
 import "./show-user.css"
 
 
 const ShowUser = (props) => {
-  const {dispatch, user, userId} = props;
+  const {
+    dispatch,
+    user,
+    userId,
+    needsMainScreenTransition,
+  } = props;
 
   // Handlers
   const buyProduct = (product) => {
@@ -46,6 +51,23 @@ const ShowUser = (props) => {
   useEffect(() => {
     dispatch(fetchUser(userId));
   }, [userId]);
+
+
+  console.log("Need", needsMainScreenTransition);
+  useEffect(() => {
+    let timer = null;
+    if (needsMainScreenTransition) {
+      timer = setTimeout(() => {
+        dispatch(mainScreenTransitionSuccess());
+        dispatch(replace("/"));
+      }, 1000);
+    }
+    return () => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+    }
+  });
 
   
   // Render Store
@@ -79,6 +101,7 @@ const ShowUser = (props) => {
 
 export default connect(
   (state, ownProps) => ({
+    needsMainScreenTransition: state.store.needsMainScreenTransition,
     userId: ownProps.match.params.userId,
     user: state.users.current,
   })
