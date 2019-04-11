@@ -56,7 +56,6 @@ function _handleSuccess(state, payload) {
     endpoint: "",
     isLoading: false,
     isFinished: true,
-    showModal: false,
   });
 }
 

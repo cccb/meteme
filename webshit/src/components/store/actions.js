@@ -13,6 +13,9 @@ export const PURCHASE_REQUEST = "store/PURCHASE_REQUEST";
 export const PURCHASE_SUCCESS = "store/PURCHASE_SUCCESS";
 export const PURCHASE_ERROR = "store/PURCHASE_ERROR";
 
+export const MAIN_SCREEN_TRANSITION_REQUEST = "store/MAIN_SCREEN_TRANSITION_REQUEST";
+export const MAIN_SCREEN_TRANSITION_SUCCESS = "store/MAIN_SCREEN_TRANSITION_SUCCESS";
+
 export const depositRequest = () => ({
   type: DEPOSIT_REQUEST,
 });
@@ -82,3 +85,13 @@ export const purchase = (user, product) => create(
 );
 
 
+export const mainScreenTransitionRequest = () => ({
+  type: MAIN_SCREEN_TRANSITION_REQUEST,
+  payload: {},
+});
+
+
+export const mainScreenTransitionSuccess = () => ({
+  type: REQUEST_MAIN_SCREEN_TRANSITION,
+  payload: {},
+});

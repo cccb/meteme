@@ -75,6 +75,18 @@ const Overlay = (props) => {
     dispatch(dismissOverlay()); 
   }
 
+  if (isFinished && !error) {
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        closeModal();
+      }, 1000);
+      return () => {
+        clearTimeout(timer);
+      };
+    });
+  }
+
+
   return (
     <div className="request-overlay">
       <div className="request-overlay-bg" />
@@ -87,9 +99,14 @@ const Overlay = (props) => {
                  <LoadingIndicator /> Please wait...
               </div>
             }
+            {isFinished && !error && 
+              <div className="action text-success">
+                Success! 
+              </div>
+            }
             <RequestError error={error} />
           </div>
-          {isFinished &&
+          {isFinished && error &&
             <div className="overlay-actions">
               <button onClick={closeModal}
                       className="btn btn-lg">Close</button>
