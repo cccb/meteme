@@ -240,14 +240,20 @@ class TransfersViewSet(GenericViewSet):
 
         # Serialize and create response
         from_account_serializer = serializers.AccountSerializer(
-            transfer['from_account']
-        )
+            transfer['from_account'])
         to_account_serializer = serializers.AccountSerializer(
-            transfer['to_account']
-        )
+            transfer['to_account'])
+
+        from_user_serializer = serializers.UserSerializer(
+            transfer["from_user"])
+        to_user_serializer = serializers.UserSerializer(
+            transfer["to_user"])
+
         return Response({
             "from_account": from_account_serializer.data,
             "to_account": to_account_serializer.data,
+            "from_user": from_user_serializer.data,
+            "to_user": to_user_serializer.data,
         })
 
 

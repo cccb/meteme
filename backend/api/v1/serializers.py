@@ -227,8 +227,10 @@ class TransferSerializer(Serializer):
             mete_models.Transaction.objects.create(amount=amount)
 
         return {
+            "from_user": from_user,
             "from_account": from_account,
             "to_account": to_account,
+            "to_user": to_user,
             "amount": amount
         }
 
