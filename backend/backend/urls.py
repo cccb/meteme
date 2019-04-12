@@ -25,7 +25,6 @@ from client import urls as client_urls
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^api/v1/', include(api_urls)),
-    url(r'^client/', include(client_urls)),
+    url(r'^', include(client_urls)),
 
-    url(r'^$', RedirectView.as_view(url='/static/webshit/index.html')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -8,7 +8,7 @@ export default (props) => {
   }
 
   const avatarId = 10050 + props.user.id;
-  const defaultAvatar = `/assets/default-avatars/default-${avatarId}.jpg`;
+  const defaultAvatar = `/static/assets/default-avatars/default-${avatarId}.jpg`;
 
   let picture = props.user.account.avatar;
   if (!picture) {
