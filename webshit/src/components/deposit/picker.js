@@ -1,10 +1,10 @@
 
 import React from 'react'
 
-import imgEur5 from './img/eur5.jpg'
-import imgEur10 from './img/eur10.jpg'
-import imgEur20 from './img/eur20.jpg'
-import imgEur50 from './img/eur50.jpg'
+import imgEur5 from './img/eur5.png'
+import imgEur10 from './img/eur10.png'
+import imgEur20 from './img/eur20.png'
+import imgEur50 from './img/eur50.png'
 
 import './picker.css'
 

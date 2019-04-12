@@ -4,19 +4,44 @@ import { connect } from 'react-redux'
 
 import { fetchProducts } from './actions'
 
-import defaultProductPicture from './img/default_product.png'
+import defaultProductPicture1 from './img/bottle1.png'
+import defaultProductPicture2 from './img/bottle2.png'
+import defaultProductPicture3 from './img/bottle3.png'
+import defaultProductPicture4 from './img/bottle4.png'
+import defaultProductPicture5 from './img/bottle5.png'
+import defaultProductPicture6 from './img/bottle6.png'
 
 import './product-picker.css'
 
+
+function rnd1d(x) {
+  return Math.abs((Math.sin(x+4293) * 400399481) % 1);
+}
+
+
+const productPictures = [
+  defaultProductPicture1,
+  defaultProductPicture2,
+  defaultProductPicture3,
+  defaultProductPicture4,
+  defaultProductPicture5,
+  defaultProductPicture6,
+];
+
 const ProductPicture = (props) => {
-  let picture = props.product.picture;
+  const {product} = props;
+  let picture = product.picture;
+  let style = {}; 
   if (!picture) {
-    picture = defaultProductPicture;
+    picture = productPictures[product.id % productPictures.length];
+    style = {
+      transform: `rotateZ(${(-23 + 2*23*rnd1d(product.id)).toFixed()}deg)`,
+    }
   }
 
   return (
     <div className="product-picture">
-      <img src={picture} 
+      <img src={picture} style={style}
            alt="product"
            title="A real product picture" />
     </div>
