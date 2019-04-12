@@ -6,12 +6,16 @@ import { replace } from 'connected-react-router'
 import { Route, Redirect } from 'react-router'
 
 import Account from './account'
+import TransferView from './transfer'
 import ProductPicker from '../products/product-picker'
-import UserPicker from '../users/user-picker'
 import DepositPicker from '../deposit/picker'
 
 import {fetchUser} from '../users/actions'
-import {deposit, purchase, mainScreenTransitionSuccess} from './actions'
+import {deposit,
+        purchase,
+        transfer,
+        mainScreenTransitionRequest,
+        mainScreenTransitionSuccess} from './actions'
 
 import "./show-user.css"
 
@@ -39,8 +43,11 @@ const ShowUser = (props) => {
     dispatch(replace(paths[target]));
   }
 
-  const chooseTransferUser = (transferUser) => {
-    console.log("Choosing transfer user:", transferUser);
+  const doTransfer = (transferUser, amount) => {
+    if (amount > 0) {
+      dispatch(transfer(user, transferUser, amount));
+      dispatch(mainScreenTransitionRequest());
+    }
   }
 
   const depositAmount = (amount) => {
@@ -53,7 +60,6 @@ const ShowUser = (props) => {
   }, [userId]);
 
 
-  console.log("Need", needsMainScreenTransition);
   useEffect(() => {
     let timer = null;
     if (needsMainScreenTransition) {
@@ -89,7 +95,7 @@ const ShowUser = (props) => {
         <ProductPicker onClick={buyProduct} />
       )} />
       <Route exact path="/store/users/:userId/transfer" render={() => (
-        <UserPicker onClick={chooseTransferUser} /> 
+        <TransferView onClick={doTransfer} />
       )} />
       <Route exact path="/store/users/:userId/deposit" render={() => (
         <DepositPicker onClick={depositAmount} />
