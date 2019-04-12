@@ -47,8 +47,12 @@ const RequestError = (props) => {
 
   let errorMsg = "";
   if (typeof(error) === "object") {
-    if (error.response && error.response.data) {
-      errorMsg = error.response.data.detail;
+    if (error.response) {
+      if (typeof(error.response.data) === "object") {
+        errorMsg = error.response.data.detail;
+      } else {
+        errorMsg = error.response.statusText;
+      }
     }
   }
 

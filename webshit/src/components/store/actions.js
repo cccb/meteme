@@ -63,7 +63,7 @@ export const purchaseSuccess = (result) => {
 };
 
 export const purchaseRequest = () => ({
-  type: PURCHASE_SUCCESS,
+  type: PURCHASE_REQUEST,
   payload: {},
 });
 
