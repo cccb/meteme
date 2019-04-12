@@ -55,3 +55,5 @@ RPMS/
 
 /var/log/*.log
 backend/static/
+
+var/media/avatars
