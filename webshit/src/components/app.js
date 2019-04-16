@@ -23,7 +23,9 @@ import storeReducer    from './store/reducer'
 // Components
 import MainLayout from './layout/main'
 
-export const history = createBrowserHistory()
+export const history = createBrowserHistory({
+  basename: "/webshit",
+});
 
 // Setup app reducer
 const rootReducer = combineReducers({

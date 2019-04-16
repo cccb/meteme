@@ -25,6 +25,6 @@ from client import urls as client_urls
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^api/v1/', include(api_urls)),
-    url(r'^', include(client_urls)),
+    url(r'^webshit/', include(client_urls)),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
