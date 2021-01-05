@@ -4,7 +4,7 @@
   "private": true,
   "homepage": "/static/webshit",
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "camelcase-keys": "^5.0.0",
     "connected-react-router": "^6.3.2",
     "history": "^4.9.0",
